@@ -55,4 +55,4 @@ npm run make
 
 ---
 
-*Made with ❤️ by iML Team*
+*Made with ❤️ by imoling.cn@gmail.com*
