@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 async function test() {
-    const indexPath = '/Users/imoling/Library/Application Support/agents-platform/memory-index';
+    const indexPath = '/Users/imoling/Library/Application Support/iml-agent-desktop/memory-index';
 
     console.log('Testing Vectra at path:', indexPath);
 

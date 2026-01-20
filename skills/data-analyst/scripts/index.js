@@ -15,7 +15,7 @@ const XLSX = require('xlsx');
 // 2. Helper Functions
 function readData(filePath) {
     const ext = path.extname(filePath).toLowerCase();
-    const debugLog = (msg) => fs.appendFileSync('/Users/imoling/projects/agents-platform/data-analyst-debug.log', msg + '\n');
+    const debugLog = (msg) => fs.appendFileSync('/Users/imoling/projects/iml-agent-desktop/data-analyst-debug.log', msg + '\n');
     debugLog(`[readData] filePath: ${filePath}, ext: '${ext}', extLen: ${ext.length}, isXlsx: ${ext === '.xlsx'}`);
 
     if (ext === '.json') {
@@ -69,7 +69,7 @@ function readData(filePath) {
 
 // 3. Main Logic
 (async () => {
-    const debugLog = (msg) => fs.appendFileSync('/Users/imoling/projects/agents-platform/data-analyst-debug.log', msg + '\n');
+    const debugLog = (msg) => fs.appendFileSync('/Users/imoling/projects/iml-agent-desktop/data-analyst-debug.log', msg + '\n');
     try {
         debugLog('Script started');
         if (!fs.existsSync(file_path)) {
