@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大模型（Large Language Models）技术介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slides-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(22, 33, 62, 0.9) 100%);
+        }
+        
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .slide-header {
+            position: absolute;
+            top: 30px;
+            left: 60px;
+            right: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .slide-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.5rem;
+            color: #b8c1ec;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+        
+        .slide-content {
+            font-size: 1.3rem;
+            line-height: 1.7;
+            max-width: 900px;
+            margin-top: 40px;
+        }
+        
+        .content-list {
+            list-style-type: none;
+            margin: 1.5rem 0;
+        }
+        
+        .content-list li {
+            margin-bottom: 1.2rem;
+            padding-left: 1.8rem;
+            position: relative;
+        }
+        
+        .content-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #4361ee;
+            font-weight: bold;
+        }
+        
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .column {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .column-title {
+            font-size: 1.4rem;
+            color: #4cc9f0;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .highlight {
+            color: #4cc9f0;
+            font-weight: 600;
+        }
+        
+        .quote {
+            font-style: italic;
+            border-left: 4px solid #4361ee;
+            padding-left: 20px;
+            margin: 25px 0;
+            color: #b8c1ec;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1rem;
+        }
+        
+        .slide-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .slide-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            left: 60px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(67, 97, 238, 0.7);
+            transform: translateY(-2px);
+        }
+        
+        .controls {
+            position: absolute;
+            top: 30px;
+            right: 60px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(67, 97, 238, 0.7);
+        }
+        
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4cc9f0;
+            letter-spacing: 1px;
+        }
+        
+        .date {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 40px;
+            }
+            
+            .slide-title {
+                font-size: 2.2rem;
+            }
+            
+            .slide-header, .slide-number, .navigation, .controls {
+                left: 40px;
+                right: 40px;
+            }
+            
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+            }
+            
+            .slide-title {
+                font-size: 1.8rem;
+            }
+            
+            .slide-content {
+                font-size: 1.1rem;
+            }
+            
+            .slide-header, .slide-number, .navigation, .controls {
+                left: 30px;
+                right: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slides-container">
+        <!-- 幻灯片 1: 封面 -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-header">
+                <div class="logo">AI技术讲座</div>
+                <div class="date">2024年11月</div>
+            </div>
+            <h1 class="slide-title">大模型（Large Language Models）技术介绍</h1>
+            <p class="slide-subtitle">人工智能新时代的引擎</p>
+            <div class="slide-content">
+                <p>探索大规模语言模型的技术原理、应用场景与未来趋势</p>
+                <div class="quote">
+                    "大模型正在重新定义人机交互的方式，推动AI技术进入普及化时代。"
+                </div>
+            </div>
+            <div class="slide-number">1 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 2: 目录 -->
+        <div class="slide" id="slide-2">
+            <div class="slide-header">
+                <div class="logo">目录</div>
+                <div class="date">大模型介绍</div>
+            </div>
+            <h2 class="slide-title">演讲大纲</h2>
+            <div class="slide-content">
+                <ul class="content-list">
+                    <li>什么是大模型？</li>
+                    <li>大模型的发展历程</li>
+                    <li>核心技术原理</li>
+                    <li>主流大模型介绍</li>
+                    <li>应用场景与案例</li>
+                    <li>面临的挑战</li>
+                    <li>未来发展趋势</li>
+                    <li>总结与展望</li>
+                </ul>
+            </div>
+            <div class="slide-number">2 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 3: 什么是大模型？ -->
+        <div class="slide" id="slide-3">
+            <div class="slide-header">
+                <div class="logo">第一章</div>
+                <div class="date">基本概念</div>
+            </div>
+            <h2 class="slide-title">什么是大模型？</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">定义</h3>
+                        <p>参数量巨大（通常数十亿以上）的语言模型，通过大规模数据预训练获得强大的语言理解和生成能力。</p>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">关键特征</h3>
+                        <ul class="content-list">
+                            <li>大规模预训练</li>
+                            <li>强大的泛化能力</li>
+                            <li>上下文学习能力</li>
+                            <li>多任务处理能力</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="quote">
+                    与传统AI模型相比，大模型通过规模效应实现了质的飞跃，具备零样本/少样本学习能力。
+                </div>
+            </div>
+            <div class="slide-number">3 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 4: 发展历程 -->
+        <div class="slide" id="slide-4">
+            <div class="slide-header">
+                <div class="logo">第二章</div>
+                <div class="date">历史演进</div>
+            </div>
+            <h2 class="slide-title">发展历程</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">早期阶段 (2017前)</h3>
+                        <ul class="content-list">
+                            <li>Word2Vec, GloVe</li>
+                            <li>LSTM, GRU</li>
+                            <li>基于规则和统计方法</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">突破期 (2017-2020)</h3>
+                        <ul class="content-list">
+                            <li>Transformer架构诞生 (2017)</li>
+                            <li>BERT, GPT-2发布</li>
+                            <li>预训练范式确立</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">爆发期 (2020至今)</h3>
+                        <ul class="content-list">
+                            <li>GPT-3 (1750亿参数)</li>
+                            <li>GPT-4, Claude, LLaMA系列</li>
+                            <li>多模态大模型兴起</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">关键里程碑</h3>
+                        <ul class="content-list">
+                            <li>2017: Transformer论文</li>
+                            <li>2018: BERT, GPT-1</li>
+                            <li>2020: GPT-3发布</li>
+                            <li>2022: ChatGPT引爆市场</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">4 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 5: 核心技术原理 -->
+        <div class="slide" id="slide-5">
+            <div class="slide-header">
+                <div class="logo">第三章</div>
+                <div class="date">技术深度</div>
+            </div>
+            <h2 class="slide-title">核心技术原理</h2>
+            <div class="slide-content">
+                <h3>Transformer架构</h3>
+                <ul class="content-list">
+                    <li><span class="highlight">自注意力机制</span>：让模型关注输入序列的不同部分</li>
+                    <li><span class="highlight">编码器-解码器结构</span>：处理序列到序列的任务</li>
+                    <li><span class="highlight">多头注意力</span>：并行学习不同的表示子空间</li>
+                </ul>
+                
+                <h3>预训练-微调范式</h3>
+                <ul class="content-list">
+                    <li><span class="highlight">大规模无监督预训练</span>：在海量文本上学习语言模式</li>
+                    <li><span class="highlight">有监督微调</span>：针对特定任务进行优化</li>
+                    <li><span class="highlight">人类反馈强化学习 (RLHF)</span>：对齐人类价值观</li>
+                </ul>
+                
+                <div class="quote">
+                    Transformer架构的出现彻底改变了自然语言处理领域，成为大模型的基石。
+                </div>
+            </div>
+            <div class="slide-number">5 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 6: 主流大模型介绍 -->
+        <div class="slide" id="slide-6">
+            <div class="slide-header">
+                <div class="logo">第四章</div>
+                <div class="date">生态系统</div>
+            </div>
+            <h2 class="slide-title">主流大模型介绍</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">OpenAI系列</h3>
+                        <ul class="content-list">
+                            <li>GPT-3.5 / GPT-4</li>
+                            <li>ChatGPT</li>
+                            <li>Codex (GitHub Copilot)</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">Meta系列</h3>
+                        <ul class="content-list">
+                            <li>LLaMA, LLaMA 2</li>
+                            <li>LLaMA 3</li>
+                            <li>开源推动者</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">国内大模型</h3>
+                        <ul class="content-list">
+                            <li>百度文心一言</li>
+                            <li>阿里通义千问</li>
+                            <li>腾讯混元</li>
+                            <li>智谱GLM</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">其他重要模型</h3>
+                        <ul class="content-list">
+                            <li>Google: PaLM, Gemini</li>
+                            <li>Anthropic: Claude</li>
+                            <li>月之暗面: Kimi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">6 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 7: 应用场景与案例 (1) -->
+        <div class="slide" id="slide-7">
+            <div class="slide-header">
+                <div class="logo">第五章</div>
+                <div class="date">应用实践</div>
+            </div>
+            <h2 class="slide-title">应用场景与案例 (1)</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">内容创作</h3>
+                        <ul class="content-list">
+                            <li>文章写作与编辑</li>
+                            <li>代码生成与调试</li>
+                            <li>创意文案与营销</li>
+                            <li>翻译与本地化</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">知识问答</h3>
+                        <ul class="content-list">
+                            <li>智能客服系统</li>
+                            <li>个性化教育辅导</li>
+                            <li>专业领域咨询</li>
+                            <li>法律文档分析</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">办公自动化</h3>
+                        <ul class="content-list">
+                            <li>邮件智能撰写</li>
+                            <li>会议纪要生成</li>
+                            <li>文档总结与提取</li>
+                            <li>演示文稿制作</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">实际案例</h3>
+                        <ul class="content-list">
+                            <li>GitHub Copilot提升开发效率</li>
+                            <li>ChatGPT辅助写作和研究</li>
+                            <li>客服机器人降低人工成本</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">7 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 8: 应用场景与案例 (2) -->
+        <div class="slide" id="slide-8">
+            <div class="slide-header">
+                <div class="logo">第五章</div>
+                <div class="date">应用实践</div>
+            </div>
+            <h2 class="slide-title">应用场景与案例 (2)</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">软件开发</h3>
+                        <ul class="content-list">
+                            <li>代码自动补全</li>
+                            <li>Bug检测与修复</li>
+                            <li>API文档生成</li>
+                            <li>测试用例编写</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">数据分析</h3>
+                        <ul class="content-list">
+                            <li>数据洞察与可视化</li>
+                            <li>自动化报告生成</li>
+                            <li>趋势预测分析</li>
+                            <li>业务指标监控</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">创意设计</h3>
+                        <ul class="content-list">
+                            <li>图像生成提示工程</li>
+                            <li>营销方案策划</li>
+                            <li>产品设计建议</li>
+                            <li>用户调研分析</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">行业解决方案</h3>
+                        <ul class="content-list">
+                            <li>金融：风险评估</li>
+                            <li>医疗：辅助诊断</li>
+                            <li>教育：个性化学习</li>
+                            <li>零售：智能推荐</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">8 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 9: 面临的挑战 -->
+        <div class="slide" id="slide-9">
+            <div class="slide-header">
+                <div class="logo">第六章</div>
+                <div class="date">挑战分析</div>
+            </div>
+            <h2 class="slide-title">面临的挑战</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">技术挑战</h3>
+                        <ul class="content-list">
+                            <li>计算资源消耗巨大</li>
+                            <li>训练成本高昂（百万美元级）</li>
+                            <li>推理速度需要优化</li>
+                            <li>模型压缩与加速</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">安全与伦理</h3>
+                        <ul class="content-list">
+                            <li>偏见与公平性问题</li>
+                            <li>事实准确性保障</li>
+                            <li>用户隐私保护</li>
+                            <li>滥用与恶意使用风险</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">实际应用挑战</h3>
+                        <ul class="content-list">
+                            <li>企业部署复杂度高</li>
+                            <li>持续运营成本控制</li>
+                            <li>与现有系统集成</li>
+                            <li>人才短缺问题</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">监管与合规</h3>
+                        <ul class="content-list">
+                            <li>数据版权问题</li>
+                            <li>行业标准缺失</li>
+                            <li>国际政策差异</li>
+                            <li>责任认定困难</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">9 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 10: 未来发展趋势 -->
+        <div class="slide" id="slide-10">
+            <div class="slide-header">
+                <div class="logo">第七章</div>
+                <div class="date">未来展望</div>
+            </div>
+            <h2 class="slide-title">未来发展趋势</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">技术趋势</h3>
+                        <ul class="content-list">
+                            <li><span class="highlight">多模态融合</span>：文本、图像、音频、视频统一处理</li>
+                            <li><span class="highlight">规模继续扩大</span>：万亿参数模型成为常态</li>
+                            <li><span class="highlight">架构创新</span>：更高效的模型架构</li>
+                            <li><span class="highlight">专业化发展</span>：垂直领域专用模型</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">部署趋势</h3>
+                        <ul class="content-list">
+                            <li><span class="highlight">边缘化部署</span>：端侧推理与轻量化</li>
+                            <li><span class="highlight">成本优化</span>：训练与推理成本下降</li>
+                            <li><span class="highlight">平台化服务</span>：模型即服务(MaaS)</li>
+                            <li><span class="highlight">开源生态</span>：社区驱动的创新</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="quote">
+                    未来3-5年，大模型将像电力一样成为基础设施，深度融入各行各业的生产流程。
+                </div>
+            </div>
+            <div class="slide-number">10 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 11: 行业生态 -->
+        <div class="slide" id="slide-11">
+            <div class="slide-header">
+                <div class="logo">第八章</div>
+                <div class="date">产业分析</div>
+            </div>
+            <h2 class="slide-title">行业生态</h2>
+            <div class="slide-content">
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">基础设施层</h3>
+                        <ul class="content-list">
+                            <li>云计算平台（AWS, Azure, 阿里云）</li>
+                            <li>芯片厂商（NVIDIA, AMD, 海思）</li>
+                            <li>算力服务提供商</li>
+                            <li>数据存储与处理</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">模型层</h3>
+                        <ul class="content-list">
+                            <li>基础模型提供商</li>
+                            <li>开源社区与组织</li>
+                            <li>模型微调服务</li>
+                            <li>模型评估与测试</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="column">
+                        <h3 class="column-title">应用层</h3>
+                        <ul class="content-list">
+                            <li>行业解决方案提供商</li>
+                            <li>开发者工具与平台</li>
+                            <li>终端应用产品</li>
+                            <li>集成服务商</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3 class="column-title">监管与标准</h3>
+                        <ul class="content-list">
+                            <li>政策法规制定者</li>
+                            <li>行业标准组织</li>
+                            <li>伦理委员会</li>
+                            <li>认证与审计机构</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">11 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 12: 总结与展望 -->
+        <div class="slide" id="slide-12">
+            <div class="slide-header">
+                <div class="logo">第九章</div>
+                <div class="date">总结</div>
+            </div>
+            <h2 class="slide-title">总结与展望</h2>
+            <div class="slide-content">
+                <h3>核心价值</h3>
+                <ul class="content-list">
+                    <li>推动AI技术普及化，降低应用门槛</li>
+                    <li>激发创新生态，催生新业态</li>
+                    <li>提升生产效率，创造经济价值</li>
+                </ul>
+                
+                <h3>展望未来</h3>
+                <ul class="content-list">
+                    <li>AI成为基础生产力工具</li>
+                    <li>人机协作新时代的到来</li>
+                    <li>技术普惠与社会责任并重</li>
+                </ul>
+                
+                <h3>行动建议</h3>
+                <ul class="content-list">
+                    <li>关注技术发展动态</li>
+                    <li>探索行业应用场景</li>
+                    <li>培养相关技术人才</li>
+                    <li>建立伦理与安全框架</li>
+                </ul>
+            </div>
+            <div class="slide-number">12 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 幻灯片 13: Q&A -->
+        <div class="slide" id="slide-13">
+            <div class="slide-header">
+                <div class="logo">结束</div>
+                <div class="date">问答环节</div>
+            </div>
+            <h2 class="slide-title">问题与回答</h2>
+            <div class="slide-content">
+                <div style="text-align: center; margin-top: 80px;">
+                    <h3 style="font-size: 2.5rem; margin-bottom: 40px;">Q&A 环节</h3>
+                    <p style="font-size: 1.5rem; margin-bottom: 30px; color: #b8c1ec;">欢迎提问与讨论</p>
+                    <div class="quote" style="max-width: 700px; margin: 40px auto;">
+                        "技术本身不是目的，创造价值才是。大模型的真正意义在于如何更好地服务人类社会。"
+                    </div>
+                    <div style="margin-top: 60px;">
+                        <h4>联系方式</h4>
+                        <p>邮箱: example@company.com</p>
+                        <p>网站: www.company.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">13 / 13</div>
+            <div class="slide-progress">
+                <div class="slide-progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 导航按钮 -->
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn">上一页</button>
+            <button class="nav-btn" id="next-btn">下一页</button>
+            <button class="nav-btn" id="fullscreen-btn">全屏</button>
+        </div>
+        
+        <!-- 控制按钮 -->
+        <div class="controls">
+            <button class="control-btn" id="first-btn" title="第一页">⇤</button>
+            <button class="control-btn" id="last-btn" title="最后一页">⇥</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const firstBtn = document.getElementById('first-btn');
+            const lastBtn = document.getElementById('last-btn');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            const progressBars = document.querySelectorAll('.slide-progress-bar');
+            const slideNumbers = document.querySelectorAll('.slide-number');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            
+            // 更新进度条
+            function updateProgress() {
+                const progress = ((currentSlide + 1) / totalSlides) * 100;
+                progressBars.forEach(bar => {
+                    bar.style.width = `${progress}%`;
+                });
+                
+                // 更新页码
+                slideNumbers.forEach((el, index) => {
+                    el.textContent = `${index + 1} / ${totalSlides}`;
+                });
+            }
+            
+            // 显示指定幻灯片
+            function showSlide(index) {
+                if (index < 0) index = 0;
+                if (index >= totalSlides) index = totalSlides - 1;
+                
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+                currentSlide = index;
+                
+                updateProgress();
+                
+                // 更新按钮状态
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === totalSlides - 1;
+            }
+            
+            // 事件监听
+            prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+            nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+            firstBtn.addEventListener('click', () => showSlide(0));
+            lastBtn.addEventListener('click', () => showSlide(totalSlides - 1));
+            
+            // 全屏功能
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`全屏请求失败: ${err.message}`);
+                    });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+            
+            // 键盘导航
+            document.addEventListener('keydown', (e) => {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                    case 'PageUp':
+                        showSlide(currentSlide - 1);
+                        break;
+                    case 'ArrowRight':
+                    case 'PageDown':
+                    case ' ':
+                        showSlide(currentSlide + 1);
+                        break;
+                    case 'Home':
+                        showSlide(0);
+                        break;
+                    case 'End':
+                        showSlide(totalSlides - 1);
+                        break;
+                    case 'f':
+                    case 'F':
+                        if (!document.fullscreenElement) {
+                            document.documentElement.requestFullscreen();
+                        } else {
+                            document.exitFullscreen();
+                        }
+                        break;
+                }
+            });
+            
+            // 初始显示第一张幻灯片并更新进度
+            showSlide(0);
+            
+            // 添加触摸滑动支持
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            document.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // 向左滑动 - 下一页
+                        showSlide(currentSlide + 1);
+                    } else {
+                        // 向右滑动 - 上一页
+                        showSlide(currentSlide - 1);
+                    }
+                }
+            }
+            
+            // 初始进度条更新
+            updateProgress();
+            
+            console.log('大模型介绍演示文稿已加载。使用左右箭头键导航，F键切换全屏。');
+        });
+    </script>
+</body>
+</html>

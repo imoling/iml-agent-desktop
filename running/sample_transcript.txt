@@ -1,0 +1,14 @@
+[Time: 10:00 AM]
+Alice: Hi everyone, let's start the meeting. Today we need to discuss the Q1 roadmap for the new Agent Platform.
+Bob: Sure. I think we should focus on the "Skills Engine" first. It's the core differentiator.
+Charlie: I agree. But we also need to make sure the UI is polished. The "Vibe Coding" aesthetic is crucial for adoption.
+Alice: Good point. Bob, can you take lead on the Skills Engine backend? We need it to run isolated processes.
+Bob: Yes, I'll handle that. I'll use child_process.fork for isolation.
+Charlie: I'll work on the Frontend using Vue 3 and Tailwind. I'll make sure the dark mode looks premium.
+Alice: Great. Also, we need to support multiple LLM providers, not just Claude. DeepSeek is getting popular.
+Bob: That will require an Adapter pattern in the LLMService. I can add that to my list.
+Alice: Okay. Let's aim to have a prototype by next Friday.
+Charlie: Sounds good. I'll need the API contract from Bob by Wednesday.
+Bob: Will do.
+
+[Meeting Ends]

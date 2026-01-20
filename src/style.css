@@ -1,0 +1,571 @@
+@import "tailwindcss";
+
+/* ===== Theme Variables ===== */
+:root {
+  /* Dark Theme (Default) */
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #16161a;
+  --bg-tertiary: #1c1c22;
+  --bg-surface: rgba(255, 255, 255, 0.05);
+  --bg-hover: rgba(255, 255, 255, 0.1);
+
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
+}
+
+/* Light Theme */
+.light {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-surface: rgba(0, 0, 0, 0.03);
+  --bg-hover: rgba(0, 0, 0, 0.05);
+
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-hover: rgba(0, 0, 0, 0.15);
+
+  --accent-primary: #4f46e5;
+  --accent-secondary: #7c3aed;
+
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.25);
+}
+
+/* ===== Light Mode Global Overrides ===== */
+/* These provide fallback styling for components not yet using CSS variables */
+
+.light,
+.light * {
+  /* Override common dark backgrounds */
+  --tw-bg-opacity: 1 !important;
+}
+
+/* Dark backgrounds → Light backgrounds */
+.light .bg-\[\#0a0a0c\],
+.light .bg-\[\#16161a\],
+.light .bg-\[\#1c1c22\],
+.light .bg-\[\#1c1c21\],
+.light .bg-\[\#1c1c21\]\/80,
+.light .bg-\[\#18181b\],
+.light .bg-\[\#1a1a1f\],
+.light .bg-\[\#1a1a20\],
+.light .bg-\[\#111116\],
+.light .bg-gray-900,
+.light .bg-gray-900\/50,
+.light .bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.light .bg-black\/20,
+.light .bg-black\/30,
+.light .bg-black\/40,
+.light .bg-white\/5,
+.light .bg-white\/10 {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Text colors */
+.light .text-gray-100,
+.light .text-gray-200,
+.light .text-white {
+  color: var(--text-primary) !important;
+}
+
+.light .text-gray-300,
+.light .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+
+/* Light text colors that need dark conversion for light mode */
+.light .text-indigo-200,
+.light .text-indigo-300 {
+  color: #4338ca !important;
+  /* Dark indigo for readability */
+}
+
+.light .text-gray-500,
+.light .text-gray-600,
+.light .text-gray-700 {
+  color: var(--text-muted) !important;
+}
+
+/* Border colors */
+.light .border-white\/5 {
+  border-color: transparent !important;
+}
+
+/* MemoryView - Search box, ID tags, and card borders */
+.light .bg-gray-900 input[type="text"] {
+  background-color: #f1f5f9 !important;
+  border: none !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .bg-gray-900 input[type="text"]:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Memory cards - remove all borders including hover */
+.light .bg-gray-900 .border,
+.light .bg-gray-900 .border-white\/5,
+.light .bg-gray-900 .border-white\/10,
+.light .bg-gray-900 .hover\:border-white\/10:hover {
+  border-color: transparent !important;
+}
+
+/* ID tags - no borders */
+.light .bg-gray-900 span.border {
+  border: none !important;
+  background-color: #f1f5f9 !important;
+}
+
+.light .border-white\/10 {
+  border-color: transparent !important;
+}
+
+.light .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.light .border-white\/30,
+.light .border-white\/40,
+.light .border-white\/50 {
+  border-color: var(--border-color) !important;
+}
+
+/* Cards and surfaces */
+.light .bg-indigo-500\/10 {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+}
+
+/* Inputs */
+.light input,
+.light textarea,
+.light select {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Modal backgrounds */
+.light .bg-\[\#16161a\] {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Modal overlay */
+.light .bg-black\/60 {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Skills page and cards */
+.light .bg-gray-900\/50 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Gradient backgrounds */
+.light .from-\[\#0a0a0c\],
+.light .to-\[\#111116\],
+.light .bg-gradient-to-br {
+  background: var(--bg-primary) !important;
+}
+
+/* Hover states */
+.light .hover\:bg-white\/5:hover,
+.light .hover\:bg-white\/10:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Code and pre blocks in light mode */
+.light pre,
+.light code {
+  background-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.light .markdown-content pre {
+  background-color: #e2e8f0 !important;
+  border-color: var(--border-color) !important;
+}
+
+.light .markdown-content code {
+  background-color: #cbd5e1 !important;
+  color: #7c3aed !important;
+}
+
+.light .markdown-content pre code {
+  background-color: transparent !important;
+  color: #334155 !important;
+}
+
+/* Markdown content text */
+.light .markdown-content h1,
+.light .markdown-content h2,
+.light .markdown-content h3 {
+  color: var(--text-primary) !important;
+}
+
+.light .markdown-content strong {
+  color: var(--accent-primary) !important;
+}
+
+/* Scrollbar for light mode */
+.light ::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb) !important;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover) !important;
+}
+
+/* Buttons and interactive elements */
+.light .bg-indigo-600 {
+  background-color: var(--accent-primary) !important;
+}
+
+/* IMPORTANT: Keep white text on colored buttons */
+.light .bg-indigo-600 .text-white,
+.light .bg-indigo-600,
+.light .bg-indigo-500,
+.light .bg-purple-600,
+.light .bg-gradient-to-br.from-indigo-500 {
+  color: #ffffff !important;
+}
+
+/* All buttons with indigo background should have white text */
+.light button.bg-indigo-600,
+.light button.bg-indigo-500,
+.light button[class*="bg-indigo-6"],
+.light button[class*="bg-indigo-5"] {
+  color: #ffffff !important;
+}
+
+/* Preserve App Logo colors */
+.light .bg-gradient-to-br.from-indigo-500.to-purple-600 {
+  background: linear-gradient(to bottom right, #6366f1, #9333ea) !important;
+  color: #ffffff !important;
+}
+
+.light .text-indigo-400,
+.light .text-indigo-300 {
+  color: var(--accent-primary) !important;
+}
+
+/* Skills Cards - Force light cards instead of dark */
+.light [class*="SkillCard"],
+.light .grid>div[class*="bg-"] {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Chat History Sidebar */
+.light .w-72 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.light .w-72 button:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Chat Interface Main Container - Force White */
+.light #chat-interface {
+  background-color: var(--bg-secondary) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ===== Chat Interface Beautification ===== */
+
+/* Message Bubbles - Assistant */
+.light #chat-interface .bg-white\/5 {
+  background-color: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Message Bubbles - User (Keep indigo but more vibrant) */
+.light #chat-interface .bg-indigo-600 {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Skill Suggestion Cards - Modern Design */
+.light #chat-interface .space-y-2>div,
+.light #chat-interface .space-y-3>div {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+.light #chat-interface .space-y-2>div:hover,
+.light #chat-interface .space-y-3>div:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* Skill Tags - Harmonize Colors */
+.light #chat-interface .bg-orange-500\/20,
+.light #chat-interface .bg-yellow-500\/20,
+.light #chat-interface .bg-amber-500\/20 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  color: #6366f1 !important;
+}
+
+.light #chat-interface .text-orange-300,
+.light #chat-interface .text-orange-400,
+.light #chat-interface .text-yellow-300,
+.light #chat-interface .text-yellow-400,
+.light #chat-interface .text-amber-300,
+.light #chat-interface .text-amber-400 {
+  color: #6366f1 !important;
+}
+
+/* Input Area - Premium Design */
+.light #chat-interface input[type="text"],
+.light #chat-interface textarea {
+  background-color: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+.light #chat-interface input[type="text"]:focus,
+.light #chat-interface textarea:focus {
+  background-color: #ffffff !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Action Buttons - Light Theme */
+.light #chat-interface button.bg-indigo-600,
+.light #chat-interface button[class*="bg-indigo"] {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3) !important;
+}
+
+.light #chat-interface button.bg-indigo-600:hover,
+.light #chat-interface button[class*="bg-indigo"]:hover {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* Toolbar & Secondary Buttons */
+.light #chat-interface .bg-white\/5,
+.light #chat-interface .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light #chat-interface .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Dropdown & Popup Backgrounds */
+.light #chat-interface .bg-\[\#1e1e24\] {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Thinking/Reasoning Block */
+.light #chat-interface details {
+  background-color: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light #chat-interface details summary:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Avatar Icons */
+.light #chat-interface .bg-gradient-to-br.from-indigo-500.to-purple-600 {
+  background: linear-gradient(135deg, #6366f1 0%, #9333ea 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+}
+
+.light #chat-interface .bg-gray-800 {
+  background-color: #f1f5f9 !important;
+  color: var(--text-secondary) !important;
+}
+
+/* All modals and dialogs - force light background */
+/* All modals and dialogs - force light background */
+.light [class*="Modal"],
+.light [class*="modal"],
+.light .fixed.inset-0>div,
+.light dialog,
+.light [role="dialog"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* About Modal specifically */
+.light .bg-\[\#1a1a1f\],
+.light .bg-\[\#18181b\],
+.light .bg-zinc-900,
+.light .bg-neutral-900 {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Workflow page editor area */
+.light .flex-1.bg-gray-800,
+.light .flex-1.bg-gray-900,
+.light [class*="bg-gray-8"],
+.light [class*="bg-gray-9"] {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Chat history item backgrounds */
+.light .w-72>div>div,
+.light .w-72 .flex.flex-col>div {
+  background-color: transparent !important;
+}
+
+.light .w-72 .flex.flex-col>button,
+.light .w-72 .flex.flex-col>div>button {
+  background-color: transparent !important;
+}
+
+.light .w-72 .flex.flex-col>button:hover,
+.light .w-72 .flex.flex-col>div>button:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Active/selected chat history item */
+.light .w-72 .bg-white\/10,
+.light .w-72 [class*="bg-white/"] {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+}
+
+
+
+/* Chat welcome card */
+.light .rounded-2xl,
+.light .rounded-xl {
+  border-color: var(--border-color) !important;
+}
+
+/* Fix hover states for skill suggestion items */
+.light .space-y-2>div:hover,
+.light .space-y-2>button:hover,
+.light .space-y-3>div:hover,
+.light .space-y-3>button:hover {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+}
+
+@theme {
+  --color-background: hsl(240 10% 3.9%);
+  --color-foreground: hsl(0 0% 98%);
+
+  --color-primary: #3b82f6;
+  --color-secondary: #64748b;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Force Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  display: block !important;
+  /* Force display */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  /* gray-400 with opacity */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.6);
+}
+
+/* Ensure Codemirror horizontal scroll is visible */
+.cm-scroller {
+  overflow: auto !important;
+}
+
+/* Markdown Styles */
+.markdown-content h1 {
+  @apply text-xl font-bold mb-3 mt-4 text-white;
+}
+
+.markdown-content h2 {
+  @apply text-lg font-bold mb-2 mt-3 text-white;
+}
+
+.markdown-content h3 {
+  @apply text-base font-bold mb-2 mt-2 text-white;
+}
+
+.markdown-content p {
+  @apply mb-2 last:mb-0;
+}
+
+.markdown-content ul {
+  @apply list-disc list-inside mb-2 pl-2;
+}
+
+.markdown-content ol {
+  @apply list-decimal list-inside mb-2 pl-2;
+}
+
+.markdown-content li {
+  @apply mb-1;
+}
+
+.markdown-content strong {
+  @apply font-bold text-indigo-300;
+}
+
+.markdown-content code {
+  @apply bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-pink-300;
+}
+
+.markdown-content pre {
+  @apply bg-black/40 p-3 rounded-lg overflow-x-auto my-2 border border-white/5;
+}
+
+.markdown-content pre code {
+  @apply bg-transparent p-0 text-gray-300 block;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-indigo-500/50 pl-4 py-1 my-2 bg-indigo-500/5 rounded-r;
+}

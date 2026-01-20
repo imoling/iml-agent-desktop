@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data Visualization</title>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        }
+        .stat-card h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .chart-title {
+            color: #333;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            text-align: center;
+        }
+        .chart {
+            height: 400px;
+            width: 100%;
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 User Data Visualization</h1>
+            <p>Interactive analysis of user demographics (Age & Gender distribution)</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="stat-value">20</div>
+                <div class="stat-label">individuals</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Age</h3>
+                <div class="stat-value">32</div>
+                <div class="stat-label">years old</div>
+            </div>
+            <div class="stat-card">
+                <h3>Male Users</h3>
+                <div class="stat-value">12</div>
+                <div class="stat-label">60% of total</div>
+            </div>
+            <div class="stat-card">
+                <h3>Female Users</h3>
+                <div class="stat-value">8</div>
+                <div class="stat-label">40% of total</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h2 class="chart-title">📈 Age Distribution Histogram</h2>
+                <div id="ageHistogram" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h2 class="chart-title">🥧 Gender Distribution Pie Chart</h2>
+                <div id="genderPie" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h2 class="chart-title">📊 Age by Gender Box Plot</h2>
+                <div id="ageBoxPlot" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h2 class="chart-title">👥 Age vs Gender Scatter</h2>
+                <div id="scatterPlot" class="chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Generated from user-data.csv | Interactive Visualization with Plotly.js</p>
+    </div>
+
+    <script>
+        // User data extracted from CSV
+        const ages = [22, 21, 43, 33, 23, 26, 26, 29, 30, 43, 44, 23, 12, 34, 35, 46, 46, 57, 23, 24];
+        const genders = ["女", "男", "女", "男", "男", "男", "男", "男", "女", "男", "女", "女", "男", "男", "男", "女", "男", "女", "男", "女"];
+        const names = ["ama", "jame", "jelly", "tom", "liming", "lihua", "hoston", "kallr", "zec", "eze", "may", "meme", "xzi", "will", "wilb", "zoo", "paul", "relll", "ray", "desin"];
+
+        // Calculate statistics
+        const maleCount = genders.filter(g => g === "男").length;
+        const femaleCount = genders.filter(g => g === "女").length;
+        const totalCount = ages.length;
+        const averageAge = Math.round(ages.reduce((a, b) => a + b, 0) / totalCount);
+        
+        // Age bins for histogram
+        const ageBins = [0, 10, 20, 30, 40, 50, 60];
+        const binLabels = ["0-10", "11-20", "21-30", "31-40", "41-50", "51-60"];
+        const ageCounts = new Array(ageBins.length - 1).fill(0);
+        
+        ages.forEach(age => {
+            for (let i = 0; i < ageBins.length - 1; i++) {
+                if (age >= ageBins[i] && age <= ageBins[i+1]) {
+                    ageCounts[i]++;
+                    break;
+                }
+            }
+        });
+
+        // 1. Age Distribution Histogram
+        const ageHistogram = document.getElementById('ageHistogram');
+        Plotly.newPlot(ageHistogram, [{
+            x: binLabels,
+            y: ageCounts,
+            type: 'bar',
+            marker: {
+                color: '#667eea',
+                line: {
+                    color: '#764ba2',
+                    width: 2
+                }
+            },
+            text: ageCounts.map(count => `${count} users`),
+            textposition: 'auto',
+            hoverinfo: 'x+y+text',
+            name: 'Users'
+        }], {
+            title: 'Number of Users by Age Group',
+            xaxis: {
+                title: 'Age Group',
+                tickangle: -45
+            },
+            yaxis: {
+                title: 'Number of Users'
+            },
+            plot_bgcolor: 'rgba(240, 240, 240, 0.8)',
+            paper_bgcolor: 'white',
+            font: {
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: '#333'
+            }
+        });
+
+        // 2. Gender Distribution Pie Chart
+        const genderPie = document.getElementById('genderPie');
+        Plotly.newPlot(genderPie, [{
+            values: [maleCount, femaleCount],
+            labels: ['Male (男)', 'Female (女)'],
+            type: 'pie',
+            hole: 0.4,
+            marker: {
+                colors: ['#36a2eb', '#ff6384'],
+                line: {
+                    color: 'white',
+                    width: 2
+                }
+            },
+            textinfo: 'label+percent',
+            hoverinfo: 'label+value+percent',
+            textposition: 'inside'
+        }], {
+            title: 'Gender Distribution',
+            plot_bgcolor: 'rgba(240, 240, 240, 0.8)',
+            paper_bgcolor: 'white',
+            font: {
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: '#333'
+            },
+            showlegend: true,
+            legend: {
+                orientation: 'h',
+                x: 0.5,
+                y: -0.1,
+                xanchor: 'center'
+            }
+        });
+
+        // 3. Age by Gender Box Plot
+        const maleAges = ages.filter((age, idx) => genders[idx] === "男");
+        const femaleAges = ages.filter((age, idx) => genders[idx] === "女");
+        
+        const ageBoxPlot = document.getElementById('ageBoxPlot');
+        Plotly.newPlot(ageBoxPlot, [
+            {
+                y: maleAges,
+                name: 'Male (男)',
+                type: 'box',
+                marker: {
+                    color: '#36a2eb'
+                },
+                boxpoints: 'all',
+                jitter: 0.3,
+                pointpos: -1.8
+            },
+            {
+                y: femaleAges,
+                name: 'Female (女)',
+                type: 'box',
+                marker: {
+                    color: '#ff6384'
+                },
+                boxpoints: 'all',
+                jitter: 0.3,
+                pointpos: -1.8
+            }
+        ], {
+            title: 'Age Distribution by Gender',
+            yaxis: {
+                title: 'Age (years)',
+                range: [0, 65]
+            },
+            xaxis: {
+                title: 'Gender'
+            },
+            plot_bgcolor: 'rgba(240, 240, 240, 0.8)',
+            paper_bgcolor: 'white',
+            font: {
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: '#333'
+            },
+            boxmode: 'group'
+        });
+
+        // 4. Scatter Plot: Age vs Gender with names
+        const scatterPlot = document.getElementById('scatterPlot');
+        
+        const maleTrace = {
+            x: names.filter((name, idx) => genders[idx] === "男"),
+            y: ages.filter((age, idx) => genders[idx] === "男"),
+            mode: 'markers',
+            name: 'Male (男)',
+            marker: {
+                size: 12,
+                color: '#36a2eb',
+                symbol: 'circle',
+                line: {
+                    color: 'white',
+                    width: 1
+                }
+            },
+            text: ages.filter((age, idx) => genders[idx] === "男").map((age, idx) => `Age: ${age}`),
+            type: 'scatter'
+        };
+        
+        const femaleTrace = {
+            x: names.filter((name, idx) => genders[idx] === "女"),
+            y: ages.filter((age, idx) => genders[idx] === "女"),
+            mode: 'markers',
+            name: 'Female (女)',
+            marker: {
+                size: 12,
+                color: '#ff6384',
+                symbol: 'diamond',
+                line: {
+                    color: 'white',
+                    width: 1
+                }
+            },
+            text: ages.filter((age, idx) => genders[idx] === "女").map((age, idx) => `Age: ${age}`),
+            type: 'scatter'
+        };
+        
+        Plotly.newPlot(scatterPlot, [maleTrace, femaleTrace], {
+            title: 'Age Distribution by User Name',
+            xaxis: {
+                title: 'User Name',
+                tickangle: -45
+            },
+            yaxis: {
+                title: 'Age (years)',
+                range: [0, 65]
+            },
+            plot_bgcolor: 'rgba(240, 240, 240, 0.8)',
+            paper_bgcolor: 'white',
+            font: {
+                family: 'Arial, sans-serif',
+                size: 10,
+                color: '#333'
+            },
+            hovermode: 'closest',
+            showlegend: true
+        });
+
+        // Add hover effects to all charts
+        document.querySelectorAll('.chart-container').forEach(container => {
+            container.addEventListener('mouseenter', () => {
+                container.style.transform = 'translateY(-5px)';
+                container.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                container.style.transform = 'translateY(0)';
+                container.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
+            });
+        });
+
+        // Update stat cards with actual calculated values
+        document.querySelectorAll('.stat-card .stat-value')[0].textContent = totalCount;
+        document.querySelectorAll('.stat-card .stat-value')[1].textContent = averageAge;
+        document.querySelectorAll('.stat-card .stat-value')[2].textContent = maleCount;
+        document.querySelectorAll('.stat-card .stat-value')[3].textContent = femaleCount;
+    </script>
+</body>
+</html>

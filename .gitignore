@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.vite/
+out/
+dist/
+
+# Whisper models (large binary files, downloaded separately)
+resources/whisper/models/*.bin
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <header class="bg-indigo-600 text-white py-12 px-6 shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-90"></div>
+        <div class="relative max-w-4xl mx-auto">
+            <h1 class="text-4xl font-extrabold mb-4 tracking-tight">Travel Plan</h1>
+            <p class="text-xl text-indigo-100 max-w-2xl"><plan>
+<step id="1">分析用户需求。行程为合肥至三亚，3天，预算2万人民币，人员为2位成人、1位儿童、1位老人（属于家庭出游，需考虑体力与活动适宜性）。时间为“下周”，需基于三亚近期的典型气候进行天气描述。</step>
+<step id="2">规划行程框架。3天行程通常包括抵达、核心游览、轻松返程或深度体验。考虑到有老人和小孩，行程设计需宽松，以休闲、观光为主，避免过于奔波。重点融入适合家庭的活动（如沙滩、公园、文化景点）。</step>
+<step id="3">进行预算估算。预算2万需覆盖四人往返机票、三晚住宿、餐饮、景点门票及当地交通。将模拟查询机票、酒店均价进行合理分配。</step>
+<step id="4">整合信息，生成最终JSON行程。将天气提示、预算分析、每日详细活动（时间、主题、活动描述、成本、类型）、住宿与餐饮推荐（模拟主流平台推荐）结构化输出。</step>
+</plan>
+
+```json
+{
+    "title": "合肥至三亚家庭休闲三日游",
+    "summary": "专为2大1小及老人设计的轻松三亚海滨度假行程，兼顾观光、美食与休闲，严格控制预算在2万元内。",
+    "weather": "下周三亚预计为初夏天气，气温约25-30°C，湿度较高，多云间晴，偶有短时阵雨。建议穿着短袖、薄外套，携带雨具、高倍数防晒霜、帽子和墨镜。海风较凉爽，但午间日照强烈。",
+    "tips": [
+        "有老人同行，行程安排宽松，每日午间预留了酒店休息时间，避免中暑和过度疲劳。",
+        "提前通过携程、飞猪等APP预订机票与酒店可享受优惠，部分景点门票（如南山文化旅游区）线上预订有折扣且免排队。",
+        "三亚海鲜市场众多，建议选择口碑好、明码标价的餐厅（可参考大众点评必吃榜），避免肠胃不适。",
+        "为孩子和老人准备常用药品，如晕车药、肠胃药、感冒药及创可贴。",
+        "三亚出租车和网约车方便，但往返机场及景点间长途建议预约专车，更舒适便捷。"
+    ],
+    "budget_breakdown": {
+        "transport": "往返机票（合肥-三亚，经济舱，4人）：约8000-9000元；当地交通（专车/出租车）：约800元。",
+        "accommodation": "亚龙湾或三亚湾家庭套房/两间房（3晚）：约5000-6000元。",
+        "food": "每日三餐及小吃（4人，含海鲜餐）：约2500-3000元。",
+        "activities": "景点门票（南山、鹿回头、亚特兰蒂斯水族馆等）：约1200元。",
+        "total": "估算总计：约17000-19500元（在2万预算内，有弹性空间）。"
+    },
+    "days": [
+        {
+            "day": 1,
+            "theme": "抵达三亚，初探椰风海韵",
+            "activities": [
+                {
+                    "time": "上午至中午",
+                    "title": "合肥新桥机场飞往三亚凤凰机场",
+                    "description": "乘坐早班机，航程约2.5小时。建议提前预约接送机服务，直达酒店，减少老人与小孩的周转劳累。",
+                    "cost": "机票已含在交通预算",
+                    "type": "transport"
+                },
+                {
+                    "time": "14:00-16:00",
+                    "title": "酒店入住与休整",
+                    "description": "推荐入住亚龙湾附近酒店，如“三亚亚龙湾红树林度假酒店”或“三亚天域度假酒店”，拥有私人沙滩和儿童设施，适合家庭。入住后稍作休息，适应环境。",
+                    "cost": "住宿费已含在预算",
+                    "type": "rest"
+                },
+                {
+                    "time": "17:00-19:00",
+                    "title": "亚龙湾沙滩漫步与日落",
+                    "description": "在酒店私人沙滩或公共沙滩区域轻松散步，孩子玩沙，老人欣赏海景。此时光线柔和，适合拍照。",
+                    "cost": "免费",
+                    "type": "sightseeing"
+                },
+                {
+                    "time": "19:30-21:00",
+                    "title": "享用酒店海鲜自助晚餐或附近餐厅",
+                    "description": "在酒店内或步行至亚龙湾百花谷商业街，选择一家环境整洁的餐厅（如“海南私房菜”），品尝椰子鸡、清蒸海鲜等清淡菜肴。",
+                    "cost": "约400-600元",
+                    "type": "food"
+                }
+            ],
+            "hotel": "三亚亚龙湾红树林度假酒店（家庭泳池房或海景房）",
+            "food": "酒店海鲜自助餐或百花谷“拾味馆·海南菜”"
+        },
+        {
+            "day": 2,
+            "theme": "文化祈福与全景俯瞰",
+            "activities": [
+                {
+                    "time": "9:00-12:30",
+                    "title": "南山文化旅游区",
+                    "description": "前往南山，参观108米海上观音，景区内电瓶车代步，节省体力。环境清幽，适合全家祈福观光。老人和小孩会对宏伟的观音像和园林景观感兴趣。",
+                    "cost": "门票+电瓶车约150元/人，总计约600元",
+                    "type": "sightseeing"
+                },
+                {
+                    "time": "13:00-14:30",
+                    "title": "景区内素食午餐",
+                    "description": "在南山景区内的“缘起楼”或“禅悦苑”品尝特色素食，清淡健康。",
+                    "cost": "约300-400元",
+                    "type": "food"
+                },
+                {
+                    "time": "15:30-17:30",
+                    "title": "鹿回头风景区",
+                    "description": "乘坐电瓶车上山，俯瞰三亚全市及海湾全景。这里是三亚的制高点，风景优美，传说动人，步行强度低，适合全家老少。",
+                    "cost": "门票+电瓶车约55元/人，总计约220元",
+                    "type": "sightseeing"
+                },
+                {
+                    "time": "18:30-20:30",
+                    "title": "第一市场海鲜晚餐",
+                    "description": "前往市区第一市场，自行选购新鲜海鲜后，到附近加工店用餐（参考大众点评高评分店铺，如“小胡子海鲜”）。体验当地市井文化，注意饮食卫生。",
+                    "cost": "海鲜采购+加工费约500-700元",
+                    "type": "food"
+                }
+            ],
+            "hotel": "继续入住原酒店",
+            "food": "南山素斋 & 第一市场海鲜加工餐"
+        },
+        {
+            "day": 3,
+            "theme": "亲子时光与悠闲返程",
+            "activities": [
+                {
+                    "time": "9:30-12:00",
+                    "title": "亚特兰蒂斯水族馆（失落的空间）",
+                    "description": "前往海棠湾，参观巨大的水族馆，观看海洋生物和表演。室内活动凉爽舒适，对孩子极具吸引力，老人也能轻松游览。",
+                    "cost": "门票约188元/人，总计约750元",
+                    "type": "sightseeing"
+                },
+                {
+                    "time": "12:30-13:30",
+                    "title": "海棠湾免税城午餐",
+                    "description": "在免税城内的美食广场或餐厅（如“鼎泰丰”、“海南味道”）用午餐，选择多样。",
+                    "cost": "约350-450元",
+                    "type": "food"
+                },
+                {
+                    "time": "14:00-16:00",
+                    "title": "免税城轻松购物或返回酒店休息",
+                    "description": "根据兴趣，可在免税城为家人选购礼品，或直接返回酒店休息、整理行李。为老人和孩子保留充足的休息时间。",
+                    "cost": "购物费用自理，不计入核心预算",
+                    "type": "rest"
+                },
+                {
+                    "time": "17:00后",
+                    "title": "前往机场，返回合肥",
+                    "title": "送往机场，返回合肥",
+                    "description": "预约送机服务，提前2-3小时抵达三亚凤凰机场，办理登机手续，结束愉快的三亚之旅。",
+                    "cost": "机票及送机已含在预算",
+                    "type": "transport"
+                }
+            ],
+            "hotel": "无（退房后行李可寄存）",
+            "food": "海棠湾免税城餐饮区"
+        }
+    ]
+}
+```</p>
+            <div class="mt-6 flex flex-wrap gap-4 text-sm font-medium">
+                <span class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">🗓️ 下周</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">👥 2大1小，有老人</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">💰 2万</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-10 space-y-12">
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2"><span>🌦️</span> Weather & Tips</h3>
+                <p class="text-gray-600 mb-4">N/A</p>
+                <ul class="space-y-2">
+                    
+                </ul>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2"><span>💳</span> Breakdown</h3>
+                <div class="space-y-3">
+                    
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">Daily Itinerary</h2>
+            <div class="space-y-8">
+                
+            </div>
+        </section>
+    </main>
+</body>
+</html>
