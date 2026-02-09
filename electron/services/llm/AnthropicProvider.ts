@@ -41,7 +41,7 @@ export class AnthropicProvider implements LLMProvider {
         try {
             const response = await client.messages.create({
                 model: this.model || 'claude-3-5-sonnet-20240620',
-                max_tokens: 4096,
+                max_tokens: 8192, // Increased for long tasks
                 system: systemPrompt,
                 tools: tools as any,
                 messages: messages.map(m => {
@@ -75,6 +75,8 @@ export class AnthropicProvider implements LLMProvider {
                     };
                 }),
             });
+
+            console.log(`[Anthropic] Response received. Stop reason: ${response.stop_reason}`);
 
             const usage = {
                 prompt_tokens: response.usage.input_tokens,

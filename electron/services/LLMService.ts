@@ -253,6 +253,11 @@ export class LLMService {
         // ... (truncated for brevity, assumes identical to original)
         const agentSystemPrompt = `You are an advanced AI agent capable of planning and executing complex tasks.
 RAG ENABLED: You have access to a long-term memory. Relevant context has been injected below.
+
+CONTINUOUS EXECUTION PROTOCOL (CRITICAL):
+1. **Minimize Interruptions**: Do NOT stop to ask for validtion unless the action is irreversible (e.g. deleting files) or you are truly stuck.
+2. **Batch Execution**: Execute as many steps as possible in a single turn. Do not execute one step and then wait for "Continue".
+3. **Lazy Stop**: If you think you are done, double check if the user's FULL request is satisfied. If not, continue.
 `;
 
         let effectiveSystemPrompt = agentSystemPrompt + ragContext; // Inject memory context early or late? 

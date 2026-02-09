@@ -1,57 +1,72 @@
+[🇨🇳 中文](README_zh.md)
+
 # iML Agent Desktop
 
-iML Agent Desktop 是一款基于第一性原理设计的桌面级全能智能体助手。它追求极致简洁的设计美感，提供强大的自动化、数据分析、创意设计和日程管理能力。
+iML Agent Desktop is a desktop-grade, all-in-one AI agent assistant designed based on first principles. It pursues ultimate minimalist design aesthetics while providing powerful capabilities in automation, data analysis, creative design, and schedule management.
 
-![App Screenshot](file:///Users/imoling/.gemini/antigravity/brain/a0495db6-ad4a-4b75-a312-2ead2b3a224a/uploaded_image_1768937347639.png)
+![App Screenshot](docs/images/app-screenshot.png)
 
-## ✨ 核心特性
+## ✨ Key Features
 
-- 🤖 **智能自动化**：深度集成桌面自动化和浏览器自动化，一键完成复杂工作流。
-- 📊 **数据分析**：内置强大的数据处理和可视化引擎，洞察数据背后的价值。
-- 🎨 **创意设计**：集成 HTML 转图片、Canvas 设计、海报生成等多种设计工具。
-- 📅 **日程管理**：智能安排任务和日程，让工作更有条理。
-- 🧠 **本地记忆库**：内置向量数据库（Vectra），为智能体提供持久的本地知识库。
-- 🔌 **技能生态**：支持 20+ 内置技能，涵盖文件处理、网页搜索、音频转录等。
+- 🤖 **Intelligent Automation**: Deep integration with desktop and browser automation to complete complex workflows with one click.
+- 📊 **Data Analysis**: Built-in powerful data processing and visualization engine to uncover value behind data.
+- 🧠 **Local Memory (RAG)**: Built-in vector database (Vectra) with **local embedding models** (Xenova). Supports **encrypted storage** for sensitive credentials and rich metadata tagging.
+- 🎙️ **Voice Interaction**: Offline speech recognition powered by **Whisper**, protecting your privacy while freeing your hands.
+- ⚡ **Robust Execution**: Implements "Continuous Execution Protocol" to handle long-running, multi-step complex tasks without interruption.
+- 🎨 **Creative Design**: Integrated with HTML-to-Image, Canvas design, poster generation, and other design tools.
+- 📅 **Schedule Management**: Smartly arranges tasks and schedules to keep your work organized.
+- 🔌 **Skill Ecosystem**: Supports 20+ built-in skills, covering file processing, web search, audio transcription, and more.
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 运行环境
-- macOS (目前主要支持 arm64)
+### Runtime Environment
+- macOS (currently mainly supports arm64)
 - Node.js 18+
 
-### 开发与打包
+### Development & Packaging
 
 ```bash
-# 安装依赖
+# Install dependencies
 npm install
 
-# 启动开发环境
+# Start development environment
 npm start
 
-# 打包应用 (生成的安装包在 out/make/ 目录下)
+# Package application (Installer will be generated in out/make/ directory)
 npm run make
 ```
 
-## 🛠️ 技术栈
+## 🛠️ Technology Stack
 
 - **Frontend**: Vue 3 + Vite + Tailwind CSS + Element Plus
 - **Desktop**: Electron + Electron Forge
-- **AI/ML**: OpenAI API + Anthropic SDK + @xenova/transformers (本地嵌入)
+- **AI/ML**: OpenAI API + Anthropic SDK + @xenova/transformers (Local Embeddings)
 - **Database**: Vectra (Vector DB)
 
-## 📄 开源协议
+## 🔒 Privacy & Security
 
-本项目采用 **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** 协议。
+- **Local First**: All vector memories and recordings are stored locally.
+- **Credential Encryption**: Sensitive information (API Keys, passwords) stored in memory is automatically encrypted using AES-256.
+- **Safe Mode**: Critical file system and shell operations require explicit user confirmation.
 
-**您可以：**
-- **共享** — 在任何媒介以任何形式复制、发行本作品。
-- **演绎** — 修改、转换或以本作品为基础进行创作。
+## 🌍 Localization
 
-**但必须遵守下列条件：**
-- **署名** — 您必须给出适当的署名，提供指向本许可协议的链接，同时标明是否对本作品作了修改。
-- **非商业性使用** — 您不得将本作品用于商业目的。
+- **Bilingual Interface**: Fully supports **English** and **Simplified Chinese** (简体中文).
+- **Auto Detection**: Automatically detects system language on first launch.
 
-详情请参阅 [LICENSE](LICENSE) 文件。
+## 📄 License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** license.
+
+**You are free to:**
+- **Share** — copy and redistribute the material in any medium or format.
+- **Adapt** — remix, transform, and build upon the material.
+
+**Under the following terms:**
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+- **NonCommercial** — You may not use the material for commercial purposes.
+
+For more details, please refer to the [LICENSE](LICENSE) file.
 
 ---
 
