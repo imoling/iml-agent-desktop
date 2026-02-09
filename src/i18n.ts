@@ -291,6 +291,26 @@ const messages = {
                 desc: 'Text added here will be masked as ****** in all UI displays.',
                 empty: 'No sensitive strings defined.',
                 delete: 'Delete'
+            },
+            context: {
+                title: 'Context Management',
+                subtitle: 'Optimize token usage for long conversations',
+                smartSummary: 'Smart Summarization',
+                smartSummaryDesc: 'Use AI to automatically summarize old conversations, preserving key information while saving tokens.',
+                smartUsageInfo: 'Currently using P1 smart compression (priority-based). Enabling smart summarization can retain longer conversation history.',
+                compressionStrategy: 'Compression Strategy',
+                strategyDesc: 'More aggressive strategies will delete more messages but may lose some context.',
+                conservative: 'Conservative',
+                balanced: 'Balanced',
+                aggressive: 'Aggressive',
+                keep90: 'Keep 90%',
+                keep75: 'Keep 75%',
+                keep60: 'Keep 60%',
+                howItWorks: 'How it Works',
+                work1: 'Automatically monitor token usage',
+                work2: 'Automatically compress conversation history when limit is exceeded',
+                work3: 'Prioritize retaining user messages and tool calls',
+                work4: 'Use AI to generate summaries of old conversations'
             }
         },
         about: {
@@ -619,6 +639,26 @@ const messages = {
                 desc: '在此添加的文本将在所有界面中显示为 ******，防止窥屏。',
                 empty: '暂无敏感词定义。',
                 delete: '删除'
+            },
+            context: {
+                title: '上下文管理',
+                subtitle: '优化长对话的 token 使用',
+                smartSummary: '智能摘要',
+                smartSummaryDesc: '使用 AI 自动总结旧对话，保留关键信息的同时节省 tokens',
+                smartUsageInfo: '当前使用 P1 智能压缩（基于优先级）。启用智能摘要可以保留更长的对话历史。',
+                compressionStrategy: '压缩策略',
+                strategyDesc: '更激进的策略会删除更多消息，但可能丢失一些上下文',
+                conservative: '保守',
+                balanced: '平衡',
+                aggressive: '激进',
+                keep90: '保留 90%',
+                keep75: '保留 75%',
+                keep60: '保留 60%',
+                howItWorks: '工作原理',
+                work1: '自动监测 token 使用情况',
+                work2: '超过限制时自动压缩对话历史',
+                work3: '优先保留用户消息和工具调用',
+                work4: '使用 AI 生成旧对话摘要'
             }
         },
         about: {

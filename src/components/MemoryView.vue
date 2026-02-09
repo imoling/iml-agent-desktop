@@ -151,20 +151,7 @@ onMounted(async () => {
         console.log('[MemoryView] Electron API found, loading items...');
         await loadItems();
 
-        // INJECT DEMO ITEM for UI Verification
-        const demoItem: MemoryItem = {
-            id: 'demo-preview',
-            content: "GitHub Personal Access Token\nToken: ghp_ExAmPlEtOkEn123456789\nScope: repo, workflow, user\nExpires: 2026-12-31",
-            encrypted: true,
-            category: 'credential',
-            priority: 'high',
-            tags: ['github', 'security', 'work'],
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            metadata: { timestamp: Date.now() }
-        };
-        // Add to beginning of list
-        items.value.unshift(demoItem);
+
 
     } else {
         console.error('[MemoryView] window.electron.memoryList is not available');

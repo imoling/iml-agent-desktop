@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Brain, Zap, Info } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const enableSummary = ref(false)
 const compressionStrategy = ref<'conservative' | 'balanced' | 'aggressive'>('balanced')
@@ -29,9 +32,9 @@ defineExpose({ save })
         <div class="space-y-1">
             <h2 class="text-xl font-bold flex items-center gap-2 text-white">
                 <Brain class="w-5 h-5 text-indigo-400" />
-                上下文管理
+                {{ t('settings.context.title') }}
             </h2>
-            <p class="text-sm text-gray-400">优化长对话的 token 使用</p>
+            <p class="text-sm text-gray-400">{{ t('settings.context.subtitle') }}</p>
         </div>
 
         <!-- Smart Summarization Card -->
@@ -42,7 +45,7 @@ defineExpose({ save })
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-white text-base">智能摘要</h3>
+                        <h3 class="font-bold text-white text-base">{{ t('settings.context.smartSummary') }}</h3>
                         
                         <button 
                             @click="enableSummary = !enableSummary"
@@ -56,14 +59,14 @@ defineExpose({ save })
                         </button>
                     </div>
                     <p class="text-sm text-gray-400 leading-relaxed">
-                        使用 AI 自动总结旧对话，保留关键信息的同时节省 tokens
+                        {{ t('settings.context.smartSummaryDesc') }}
                     </p>
                     
                     <!-- Info Box -->
                     <div v-if="!enableSummary" class="flex items-start gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg mt-3">
                         <Info class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                         <p class="text-xs text-blue-300">
-                            当前使用 P1 智能压缩（基于优先级）。启用智能摘要可以保留更长的对话历史。
+                            {{ t('settings.context.smartUsageInfo') }}
                         </p>
                     </div>
                 </div>
@@ -77,7 +80,7 @@ defineExpose({ save })
                     <span class="text-xl">⚙️</span>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-white text-base mb-3">压缩策略</h3>
+                    <h3 class="font-bold text-white text-base mb-3">{{ t('settings.context.compressionStrategy') }}</h3>
                     
                     <div class="grid grid-cols-3 gap-3 mb-2">
                         <button
@@ -86,8 +89,8 @@ defineExpose({ save })
                             :class="compressionStrategy === 'conservative' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-black/30 border-white/10 text-gray-400 hover:bg-white/5'"
                         >
                             <span class="w-2 h-2 rounded-full bg-green-400" v-if="compressionStrategy === 'conservative'"></span>
-                            <div>保守</div>
-                            <div class="text-xs opacity-70">保留 90%</div>
+                            <div>{{ t('settings.context.conservative') }}</div>
+                            <div class="text-xs opacity-70">{{ t('settings.context.keep90') }}</div>
                         </button>
                         <button
                             @click="compressionStrategy = 'balanced'"
@@ -95,8 +98,8 @@ defineExpose({ save })
                             :class="compressionStrategy === 'balanced' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-black/30 border-white/10 text-gray-400 hover:bg-white/5'"
                         >
                             <span class="w-2 h-2 rounded-full bg-green-400" v-if="compressionStrategy === 'balanced'"></span>
-                            <div>平衡</div>
-                            <div class="text-xs opacity-70">保留 75%</div>
+                            <div>{{ t('settings.context.balanced') }}</div>
+                            <div class="text-xs opacity-70">{{ t('settings.context.keep75') }}</div>
                         </button>
                         <button
                             @click="compressionStrategy = 'aggressive'"
@@ -104,12 +107,12 @@ defineExpose({ save })
                             :class="compressionStrategy === 'aggressive' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-black/30 border-white/10 text-gray-400 hover:bg-white/5'"
                         >
                             <span class="w-2 h-2 rounded-full bg-green-400" v-if="compressionStrategy === 'aggressive'"></span>
-                            <div>激进</div>
-                            <div class="text-xs opacity-70">保留 60%</div>
+                            <div>{{ t('settings.context.aggressive') }}</div>
+                            <div class="text-xs opacity-70">{{ t('settings.context.keep60') }}</div>
                         </button>
                     </div>
                     <p class="text-sm text-gray-400 leading-relaxed">
-                        更激进的策略会删除更多消息，但可能丢失一些上下文
+                        {{ t('settings.context.strategyDesc') }}
                     </p>
                 </div>
             </div>
@@ -122,23 +125,23 @@ defineExpose({ save })
                     <Info class="w-6 h-6 text-indigo-400" />
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-white text-base mb-3">工作原理</h3>
+                    <h3 class="font-bold text-white text-base mb-3">{{ t('settings.context.howItWorks') }}</h3>
                     <ul class="text-sm text-gray-400 space-y-2 leading-relaxed">
                         <li class="flex items-start gap-2">
                             <span class="text-indigo-400 mt-0.5">•</span>
-                            <span>自动监测 token 使用情况</span>
+                            <span>{{ t('settings.context.work1') }}</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="text-indigo-400 mt-0.5">•</span>
-                            <span>超过限制时自动压缩对话历史</span>
+                            <span>{{ t('settings.context.work2') }}</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="text-indigo-400 mt-0.5">•</span>
-                            <span>优先保留用户消息和工具调用</span>
+                            <span>{{ t('settings.context.work3') }}</span>
                         </li>
                         <li v-if="enableSummary" class="flex items-start gap-2">
                             <span class="text-yellow-400 mt-0.5">•</span>
-                            <span>使用 AI 生成旧对话摘要</span>
+                            <span>{{ t('settings.context.work4') }}</span>
                         </li>
                     </ul>
                 </div>

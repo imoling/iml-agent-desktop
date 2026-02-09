@@ -107,12 +107,7 @@ const formatTime = (ts?: number) => {
 }
 
 const handleDecrypt = async () => {
-    // Special handling for demo item
-    if (props.item.id === 'demo-preview') {
-        decryptedContent.value = props.item.content
-        isDecrypted.value = true
-        return
-    }
+
 
     try {
         // Deep clone to remove Vue reactivity/Proxy

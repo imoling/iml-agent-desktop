@@ -224,7 +224,22 @@ export class VectorStore {
 
         try {
             const items = await this.index!.listItems();
-            const itemsToDelete = items.filter(item => item.metadata.source === source);
+            const itemsToDelete = items.filter(item => {
+                // Check direct metadata source
+                if (item.metadata.source === source) return true;
+
+                // Check enhanced memory source
+                if (item.metadata.isEnhancedMemory && item.metadata.memoryData) {
+                    try {
+                        const memory = JSON.parse(item.metadata.memoryData as string) as EnhancedMemory;
+                        return memory.source === source;
+                    } catch {
+                        return false;
+                    }
+                }
+                return false;
+            });
+
             console.log(`[VectorStore] Found ${itemsToDelete.length} items to delete for source: ${source}`);
 
             for (const item of itemsToDelete) {
@@ -285,6 +300,7 @@ export class VectorStore {
         return chunks;
     }
     async deleteEnhancedMemory(memoryId: string): Promise<void> {
+        console.log(`[VectorStore] deleteEnhancedMemory called for Memory ID: ${memoryId}`);
         if (!this.index) await this.initialize();
 
         // Need to find the vectra item ID that corresponds to this memory ID
@@ -302,8 +318,40 @@ export class VectorStore {
         });
 
         if (itemToDelete) {
+            // 1. Try standard deletion
             await this.index!.deleteItem(itemToDelete.id);
             console.log(`[VectorStore] Deleted enhanced memory: ${memoryId} (Vector ID: ${itemToDelete.id})`);
+
+            // 2. Verification & Force Persistence
+            // Vectra sometimes fails to persist deletion to disk in Electron environment.
+            // We manually verify index.json and force write if needed.
+            try {
+                const indexFile = path.join(this.indexPath, 'index.json');
+                if (fs.existsSync(indexFile)) {
+                    const indexContent = fs.readFileSync(indexFile, 'utf-8');
+                    const indexData = JSON.parse(indexContent);
+
+                    // Check if item still exists in disk file
+                    const existsOnDisk = indexData.items.some((i: any) => i.id === itemToDelete.id);
+
+                    if (existsOnDisk) {
+                        console.warn(`[VectorStore] Item ${itemToDelete.id} still exists on disk after deletion. Forcing persistence.`);
+
+                        // Filter out the item
+                        indexData.items = indexData.items.filter((i: any) => i.id !== itemToDelete.id);
+
+                        // Write back to disk
+                        fs.writeFileSync(indexFile, JSON.stringify(indexData));
+                        console.log(`[VectorStore] Forced persistence complete.`);
+
+                        // Re-initialize index to ensure memory state matches disk
+                        this.index = new LocalIndex(this.indexPath);
+                    }
+                }
+            } catch (err) {
+                console.error('[VectorStore] Error during persistence verification:', err);
+            }
+
         } else {
             console.warn(`[VectorStore] Memory not found for deletion: ${memoryId}`);
         }

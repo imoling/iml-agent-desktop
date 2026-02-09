@@ -305,8 +305,9 @@ app.whenReady().then(async () => {
     });
 
     ipcMain.handle('memory-delete', async (event, id) => {
+        console.log('[Main] IPC memory-delete received:', id);
         try {
-            return await vectorStore.deleteDocument(id);
+            return await vectorStore.deleteEnhancedMemory(id);
         } catch (e) {
             console.error('[Main] IPC memory-delete failed:', e);
             throw e;

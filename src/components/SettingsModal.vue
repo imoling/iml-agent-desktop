@@ -36,7 +36,7 @@ const visionModel = ref({
 
 const tabs = [
     { id: 'general', label: 'settings.general.title', icon: Settings },
-    { id: 'context', label: '上下文管理', icon: Brain },
+    { id: 'context', label: 'settings.context.title', icon: Brain },
     { id: 'vision', label: 'settings.vision.title', icon: Globe },
     { id: 'voice', label: 'settings.voice.title', icon: Mic },
     { id: 'secrets', label: 'settings.secrets.title', icon: Lock },
