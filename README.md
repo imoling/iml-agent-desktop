@@ -19,6 +19,8 @@
 
 ## 🚀 Quick Start
 
+> **[📦 Installation Guide (v0.5.0)](INSTALL_v0.5.0.md)**: Click here for detailed installation and setup instructions.
+
 ### Runtime Environment
 - macOS (currently mainly supports arm64)
 - Node.js 18+

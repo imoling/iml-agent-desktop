@@ -1,6 +1,6 @@
 {
   "name": "iml-agent-desktop",
-  "version": "1.0.0",
+  "version": "0.5.0",
   "description": "",
   "main": ".vite/build/main.js",
   "scripts": {
