@@ -4,24 +4,47 @@
 
 ## 📦 软件包清单 (Package Contents)
 
-本次发布包含两个文件：
+本次发布包含三个文件：
 
 1.  **`iml-agent-desktop-darwin-arm64-0.5.0.zip`**
     -   **类型**: 应用程序 (Application)
-    -   **描述**: 这是主程序安装包，解压后包含 `iML Agent Desktop.app`。
-2.  **`iml-resources-0.5.0.zip`**
-    -   **类型**: 资源包 (Assets)
-    -   **描述**: 包含所有内置技能 (`skills/`) 和离线模型 (`resources/models/`)。
-    -   **注意**: 应用程序已内置这些资源，该压缩包仅作为备份或供开发者参考使用。
+    -   **描述**: 主程序安装包。解压后得到 `iML Agent Desktop.app` (约 400MB)。
+2.  **`iml-skills.zip`**
+    -   **类型**: 资源包 (必须安装)
+    -   **描述**: 包含 Agent 运行所需的技能文件。
+3.  **`iml-models-whisper.zip`**
+    -   **类型**: 资源包 (语音功能必须)
+    -   **描述**: 包含离线语音识别 (Whisper) 模型文件。
 
 ---
 
 ## 🚀 安装步骤 (Installation)
 
-### 1. 解压与安装
+### 1. 安装主程序
 双击解压 `iml-agent-desktop-darwin-arm64-0.5.0.zip`，将解压得到的 **iML Agent Desktop.app** 拖入 **应用程序 (Applications)** 文件夹。
 
-### 2. 首次运行与安全信任
+### 2. 安装资源文件 (关键步骤)
+由于为了减小主应用体积，**技能和模型作为独立文件分发，您必须手动安装它们**，否则应用功能将受限。
+
+1.  **定位应用资源目录**:
+    -   进入 **应用程序 (Applications)** 文件夹。
+    -   右键点击 **iML Agent Desktop.app**，选择 **"显示包内容" (Show Package Contents)**。
+    -   依次进入目录: `Contents` -> `Resources`。
+
+2.  **安装技能 (Skills)**:
+    -   双击解压 `iml-skills.zip`，得到 `skills` 文件夹。
+    -   复制 (`cmd+c`) 整个 **`skills`** 文件夹。
+    -   粘贴 (`cmd+v`) 到刚才打开的 **`Resources`** 目录中。
+    -   *检查*: 确保路径为 `Contents/Resources/skills`。
+
+3.  **安装 Whisper 模型**:
+    -   双击解压 `iml-models-whisper.zip`，得到 `whisper` 文件夹。
+    -   复制 (`cmd+c`) **`whisper`** 文件夹。
+    -   在 **`Resources`** 目录中，进入 **`models`** 文件夹 (如果不存在请创建，但通常已有 `Xenova` 目录)。
+    -   粘贴 (`cmd+v`) **`whisper`** 文件夹到这里。
+    -   *检查*: 确保路径为 `Contents/Resources/models/whisper`。
+
+### 3. 首次运行与安全信任
 由于是体验版本（未进行 Apple 开发者签名），首次运行时可能会提示 **"无法打开，因为无法验证开发者"**。
 
 **解决方法**:
