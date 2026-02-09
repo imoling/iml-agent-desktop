@@ -4,6 +4,8 @@ import fs from 'fs';
 import { app } from 'electron';
 import { LocalIndex } from 'vectra';
 import { LLMService } from '../LLMService';
+import { EnhancedMemory, MemoryCategory } from '../../types';
+import memoryManager from '../MemoryManager';
 
 export interface VectorDocument {
     id: string;
@@ -68,6 +70,127 @@ export class VectorStore {
             } catch (e) {
                 console.error('[VectorStore] Failed to embed/insert chunk:', e);
             }
+        }
+    }
+
+    /**
+     * 添加增强记忆
+     */
+    async addEnhancedMemory(memory: EnhancedMemory): Promise<void> {
+        console.log('[VectorStore] addEnhancedMemory called:', memory.id);
+        if (!this.index) await this.initialize();
+
+        // 获取可搜索的内容（解密如果需要）
+        let searchableContent = memory.content
+        if (memory.encrypted) {
+            try {
+                searchableContent = memoryManager.decryptMemory(memory)
+            } catch (error) {
+                console.error('[VectorStore] Cannot index encrypted memory (locked):', error)
+                // 仍然存储，但不创建向量索引
+                return
+            }
+        }
+
+        try {
+            const vector = await this.llmService.getEmbedding(searchableContent)
+
+            await this.index!.insertItem({
+                vector,
+                metadata: {
+                    isEnhancedMemory: true,
+                    memoryData: JSON.stringify(memory),
+                    searchableContent,
+                    timestamp: memory.createdAt
+                }
+            })
+            console.log('[VectorStore] Enhanced memory indexed successfully')
+        } catch (error) {
+            console.error('[VectorStore] Failed to index enhanced memory:', error)
+            throw error
+        }
+    }
+
+    /**
+     * 获取所有增强记忆
+     */
+    async listEnhancedMemories(): Promise<EnhancedMemory[]> {
+        console.log('[VectorStore] listEnhancedMemories called')
+        if (!this.index) await this.initialize()
+
+        try {
+            const items = await this.index!.listItems()
+            const memories: EnhancedMemory[] = []
+
+            for (const item of items) {
+                // 检查是否是增强记忆
+                if (item.metadata.isEnhancedMemory && item.metadata.memoryData) {
+                    try {
+                        const memory = JSON.parse(item.metadata.memoryData as string) as EnhancedMemory
+                        memories.push(memory)
+                    } catch (error) {
+                        console.error('[VectorStore] Failed to parse memory data:', error)
+                    }
+                }
+            }
+
+            console.log(`[VectorStore] Found ${memories.length} enhanced memories`)
+            return memories
+        } catch (error) {
+            console.error('[VectorStore] Error listing enhanced memories:', error)
+            throw error
+        }
+    }
+
+    /**
+     * 搜索增强记忆
+     */
+    async searchEnhancedMemories(
+        query: string,
+        options: {
+            limit?: number
+            categories?: MemoryCategory[]
+            priorities?: ('high' | 'medium' | 'low')[]
+        } = {}
+    ): Promise<{ memory: EnhancedMemory; score: number }[]> {
+        const { limit = 5, categories, priorities } = options
+        console.log(`[VectorStore] searchEnhancedMemories: "${query}"`, options)
+
+        if (!this.index) await this.initialize()
+
+        try {
+            const vector = await this.llmService.getEmbedding(query)
+            const results = await this.index!.queryItems(vector, query, limit * 2) // 获取更多结果用于筛选
+
+            const memories: { memory: EnhancedMemory; score: number }[] = []
+
+            for (const result of results) {
+                // 检查是否是增强记忆
+                if (!result.item.metadata.isEnhancedMemory || !result.item.metadata.memoryData) continue
+
+                try {
+                    const memory = JSON.parse(result.item.metadata.memoryData as string) as EnhancedMemory
+
+                    // 应用筛选
+                    if (categories && !categories.includes(memory.category)) continue
+                    if (priorities && !priorities.includes(memory.priority)) continue
+
+                    memories.push({
+                        memory,
+                        score: result.score
+                    })
+
+                    if (memories.length >= limit) break
+                } catch (error) {
+                    console.error('[VectorStore] Failed to parse memory data:', error)
+                }
+            }
+
+            console.log(`[VectorStore] Found ${memories.length} matching enhanced memories`)
+            return memories
+        } catch (error) {
+            console.error('[VectorStore] Enhanced memory search failed:', error)
+            throw error
         }
     }
 
@@ -160,5 +283,29 @@ export class VectorStore {
             }
         }
         return chunks;
+    }
+    async deleteEnhancedMemory(memoryId: string): Promise<void> {
+        if (!this.index) await this.initialize();
+
+        // Need to find the vectra item ID that corresponds to this memory ID
+        const items = await this.index!.listItems();
+        const itemToDelete = items.find(item => {
+            if (item.metadata.isEnhancedMemory && item.metadata.memoryData) {
+                try {
+                    const mem = JSON.parse(item.metadata.memoryData as string) as EnhancedMemory;
+                    return mem.id === memoryId;
+                } catch {
+                    return false;
+                }
+            }
+            return false;
+        });
+
+        if (itemToDelete) {
+            await this.index!.deleteItem(itemToDelete.id);
+            console.log(`[VectorStore] Deleted enhanced memory: ${memoryId} (Vector ID: ${itemToDelete.id})`);
+        } else {
+            console.warn(`[VectorStore] Memory not found for deletion: ${memoryId}`);
+        }
     }
 }

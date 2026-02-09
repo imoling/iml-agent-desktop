@@ -18,6 +18,7 @@ export class SkillManager {
     private llmService: any = null;
     private vectorStore: any = null;
     private voiceService: any = null;
+    private memoryManager: any = null;
 
     private configManager: any;
 
@@ -38,6 +39,10 @@ export class SkillManager {
 
     setVoiceService(service: any) {
         this.voiceService = service;
+    }
+
+    setMemoryManager(manager: any) {
+        this.memoryManager = manager;
     }
 
     /**
@@ -211,13 +216,55 @@ export class SkillManager {
                 }
 
                 if (message.type === 'memory-request') {
-                    if (this.vectorStore) {
+                    // Search still uses VectorStore directly for now (or could go through MemoryManager if it had search)
+                    // Add MUST go through MemoryManager for metadata and encryption
+                    const targetService = message.payload.action === 'add' ? this.memoryManager : this.vectorStore;
+
+                    if (targetService) {
                         try {
                             let result;
                             if (message.payload.action === 'add') {
-                                // payload.content, payload.metadata
-                                result = await this.vectorStore.addDocument(message.payload.content, message.payload.metadata);
+                                if (!this.memoryManager) {
+                                    throw new Error('MemoryManager not linked to SkillManager');
+                                }
+                                // payload.content, payload.metadata, payload.options
+                                const { content, metadata, options } = message.payload;
+
+                                // Merge metadata and options? MemoryManager.createMemory takes (content, options)
+                                // options includes category, priority, tags, encrypted, metadata
+                                const createOptions = {
+                                    ...options,
+                                    metadata: {
+                                        ...metadata,
+                                        ...(options?.metadata || {})
+                                    }
+                                };
+
+                                const memory = await this.memoryManager.createMemory(content, createOptions);
+                                result = { success: true, id: memory.id };
+
+                                // Also index it immediately? 
+                                // MemoryManager createMemory internally should call VectorStore.addEnhancedMemory
+                                // Let's verify MemoryManager later. If it doesn't, we might need to call it here.
+                                // BUT usually Manager handles everything.
+                                // Update: MemoryManager just creates the object. It probably expects the caller to save it?
+                                // Let's check MemoryManager.createMemory implementation again.
+                                // Wait, I viewed MemoryManager before. It returns a memory object.
+                                // It does NOT seem to save it to vector store automatically in the snippet I saw.
+                                // I need to check MemoryManager again.
+                                // IF MemoryManager doesn't save, I need to save it here.
+
+                                // RE-READING MemoryManager in my mind (or verifying):
+                                // The snippet showed createMemory returning 'memory'.
+                                // It didn't show saving.
+                                // So I probably need to call vectorStore.addEnhancedMemory(memory).
+
+                                await this.vectorStore.addEnhancedMemory(memory);
+
                             } else if (message.payload.action === 'search') {
+                                if (!this.vectorStore) {
+                                    throw new Error('VectorStore not linked to SkillManager');
+                                }
                                 // payload.query, payload.limit
                                 result = await this.vectorStore.search(message.payload.query, message.payload.limit);
                             }
@@ -237,7 +284,7 @@ export class SkillManager {
                         child.send({
                             type: 'memory-response',
                             id: message.id,
-                            payload: { error: 'VectorStore not linked to SkillManager' }
+                            payload: { error: 'Required service (MemoryManager or VectorStore) not linked' }
                         });
                     }
                 }

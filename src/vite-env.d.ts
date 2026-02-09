@@ -47,7 +47,35 @@ interface Window {
         stopWorkflow: (id: string) => Promise<boolean>;
         onWorkflowProgress: (callback: (data: { stepId: string; status: string; output?: any }) => void) => () => void;
 
-        // Memory
+        // Encryption (Phase 1)
+        encryptionHasMasterPassword: () => Promise<boolean>;
+        encryptionSetMasterPassword: (password: string) => Promise<boolean>;
+        encryptionUnlock: (password?: string) => Promise<boolean>;
+        encryptionVerifyPassword: (password: string) => Promise<boolean>;
+        encryptionIsUnlocked: () => Promise<boolean>;
+        encryptionLock: () => Promise<void>;
+        encryptionClearAll: () => Promise<void>;
+
+        // Enhanced Memory (Phase 2-5)
+        memoryAddEnhanced: (options: any) => Promise<any>;
+        memoryListEnhanced: () => Promise<any[]>;
+        memorySearchEnhanced: (query: string, options?: any) => Promise<any[]>;
+        memoryGetStatistics: () => Promise<any>;
+        memorySuggestCategory: (content: string) => Promise<string>;
+        memoryDecrypt: (memory: any) => Promise<{ success: boolean; content?: string }>;
+        memoryAddManual: (options: any) => Promise<{ success: boolean; memory?: any; error?: string }>;
+        memoryGetUsageForMessage: (messageId: string, query: string) => Promise<{ success: boolean; memoryUsage?: any[] }>;
+
+        // Memory Optimization (Phase 5)
+        memoryFindDuplicates: (threshold?: number) => Promise<{ success: boolean; duplicates?: any[] }>;
+        memoryMergeDuplicates: (id1: string, id2: string) => Promise<{ success: boolean; merged?: any }>;
+        memoryOptimizeAll: () => Promise<{ success: boolean; optimized?: number; removed?: number; merged?: number }>;
+        memorySuggestCategoryAdvanced: (content: string) => Promise<{ success: boolean; category?: string; confidence?: number; keywords?: string[] }>;
+
+        // System
+        copyToClipboard: (text: string) => Promise<boolean>;
+
+        // Legacy Memory (keeping for compatibility)
         memoryAdd: (content: string, metadata: any) => Promise<void>;
         memorySearch: (query: string, limit: number) => Promise<any[]>;
         memoryList: () => Promise<any[]>;
@@ -71,6 +99,7 @@ interface Window {
         historyDelete: (id: string) => Promise<boolean>;
         historyRename: (id: string, title: string) => Promise<any>;
         shellOpenPath: (path: string) => Promise<void>;
+        showItemInFolder: (path: string) => Promise<boolean>;
         pathResolve: (...args: string[]) => string;
     }
 }

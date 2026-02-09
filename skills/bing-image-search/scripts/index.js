@@ -151,7 +151,7 @@ function openFile(filePath) {
 
         fs.writeFileSync(filePath, html);
         console.log(`Gallery saved to Desktop: ${filename}`);
-        openFile(filePath);
+        // openFile(filePath); // Disable auto-open to respect user preference for background execution
 
         // Return a markdown link for the chat
         console.log(`[GALLERY](${filePath})`);

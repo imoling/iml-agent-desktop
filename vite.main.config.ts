@@ -16,6 +16,7 @@ export default defineConfig({
                 // Puppeteer has its own bundled Chromium
                 'puppeteer',
                 'puppeteer-core',
+                'keytar',
             ]
         },
         // Ensure CommonJS modules work properly

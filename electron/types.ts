@@ -43,3 +43,52 @@ export interface Workflow {
     createdAt: number;
     updatedAt: number;
 }
+
+/**
+ * Enhanced Memory Data Model
+ * 支持加密、分类、优先级等高级功能
+ */
+
+export enum MemoryCategory {
+    PERSONAL = 'personal',      // 个人信息
+    PROJECT = 'project',        // 项目知识
+    PREFERENCE = 'preference',  // 偏好设置
+    CREDENTIAL = 'credential',  // 凭证（强制加密）
+    TEMPORARY = 'temporary'     // 临时记忆
+}
+
+export interface EnhancedMemory {
+    id: string
+    content: string              // 明文或密文（取决于 encrypted 字段）
+    encrypted: boolean           // 是否加密
+    category: MemoryCategory     // 分类
+    priority: 'high' | 'medium' | 'low'
+    tags: string[]
+    expiresAt?: number          // 过期时间戳（可选）
+    createdAt: number
+    updatedAt: number
+    source: string
+    metadata: {
+        conversationId?: string
+        messageId?: string
+        [key: string]: any
+    }
+}
+
+/**
+ * 记忆使用追踪
+ */
+export interface MemoryUsage {
+    memoryId: string
+    relevanceScore: number
+    content: string
+    category: MemoryCategory
+}
+
+/**
+ * 加密配置
+ */
+export interface EncryptionConfig {
+    enabled: boolean
+    testCiphertext?: string  // 用于验证密码的测试密文
+}

@@ -312,7 +312,26 @@ const messages = {
             empty: 'Memory is empty.',
             confirmDelete: 'Are you sure you want to delete this memory item?',
             addDialogTitle: 'Add to Memory',
-            addPlaceholder: 'Enter text content to store in memory...'
+            addPlaceholder: 'Enter text content to store in memory...',
+            // New keys
+            allItems: 'All Items',
+            sources: 'Sources (Files)',
+            chunksStored: 'chunks stored',
+            deleteAll: 'Delete All',
+            deleteAllConfirm: 'Are you sure you want to delete ALL {source} memories? This cannot be undone.',
+            category: {
+                personal: 'Personal',
+                project: 'Project',
+                preference: 'Preference',
+                credential: 'Credential',
+                temporary: 'Temporary',
+                note: 'Note',
+                unknown: 'Unknown'
+            },
+            highPriority: 'High Priority',
+            encryptedContent: 'Encrypted Content',
+            tapToUnlock: 'Tap to Unlock',
+            deleteMemory: 'Delete Memory'
         }
     },
     'zh-CN': {
@@ -394,7 +413,7 @@ const messages = {
             run: '运行',
             author: '作者',
             version: '版本',
-            createSkill: '创建新技能',  // Added explicit key for header button
+            createSkill: '创建新技能',
             edit: '编辑技能',
             importSkill: '导入技能',
             githubUrl: 'GitHub 仓库地址',
@@ -481,7 +500,6 @@ const messages = {
             paramDesc: '描述',
             generate: '立即生成',
             generating: '生成中...',
-            // New keys for Modal
             createSkill: '创建新技能',
             editSkill: '编辑技能',
             createDetails: '定义输入和逻辑',
@@ -502,7 +520,6 @@ const messages = {
             confirmDelete: '确定要删除技能 “{name}” 吗？此操作无法撤销。',
             showInChat: '在对话中显示',
             showInChatDesc: '在对话初始建议菜单中显示此技能。',
-
             required: '必填 (Required)',
             addInput: '添加输入参数',
             parameterName: '参数名',
@@ -623,7 +640,25 @@ const messages = {
             empty: '记忆库为空。',
             confirmDelete: '确定要删除这条记忆吗？',
             addDialogTitle: '添加到记忆',
-            addPlaceholder: '输入要存储的文本内容...'
+            addPlaceholder: '输入要存储的文本内容...',
+            allItems: '全部记忆',
+            sources: '来源文件',
+            chunksStored: '个片段已存储',
+            deleteAll: '删除全部',
+            deleteAllConfirm: '确定要删除所有来自 {source} 的记忆吗？此操作无法撤销。',
+            category: {
+                personal: '个人信息',
+                project: '项目知识',
+                preference: '偏好设置',
+                credential: '凭证 (加密)',
+                temporary: '临时记忆',
+                note: '笔记',
+                unknown: '未知'
+            },
+            highPriority: '高优先级',
+            encryptedContent: '加密内容',
+            tapToUnlock: '点击解锁',
+            deleteMemory: '删除记忆'
         }
     }
 }

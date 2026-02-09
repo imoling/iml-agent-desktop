@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { Trash2, Search, Plus, Database, X, FileText } from 'lucide-vue-next'
+import { Trash2, Search, Plus, Database, X, FileText, Lock, Unlock, Tag, AlertCircle, Briefcase, User, Heart, Key, Clock } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import MemoryDialog from './MemoryDialog.vue'
+import MemoryCard from './MemoryCard.vue'
 
 console.log('[MemoryView] Setup started')
 
@@ -10,6 +12,12 @@ const { t } = useI18n()
 interface MemoryItem {
     id: string;
     content: string;
+    encrypted?: boolean;
+    category?: string;
+    priority?: string;
+    tags?: string[];
+    createdAt?: number;
+    updatedAt?: number;
     metadata: any;
 }
 
@@ -36,7 +44,7 @@ const uniqueSources = computed(() => {
 })
 
 const deleteSource = async (source: string) => {
-    if (confirm(`Are you sure you want to delete ALL ${source} memories? This cannot be undone.`)) {
+    if (confirm(t('memory.deleteAllConfirm', { source }))) {
         isLoading.value = true
         try {
             const count = await window.electron.memoryDeleteBySource(source)
@@ -106,6 +114,34 @@ const addItem = async () => {
     }
 }
 
+const handleSaveMemory = async (data: any) => {
+    isAdding.value = true
+    try {
+        // Strictly construct payload to avoid any serialization issues
+        const content = String(data.content || '')
+        const safeMetadata = {
+            category: data.category || 'note',
+            priority: data.priority || 'medium',
+            tags: Array.isArray(data.tags) ? [...data.tags] : [],
+            encrypted: !!data.encrypted,
+            expiresAt: typeof data.expiresAt === 'number' ? data.expiresAt : undefined,
+            source: 'manual',
+            timestamp: Date.now()
+        }
+        
+        await window.electron.memoryAdd(content, safeMetadata)
+        
+        newItemContent.value = ''
+        showAddDialog.value = false
+        await loadItems()
+    } catch (e: any) {
+        console.error('Failed to add item:', e)
+        alert('Failed to add item: ' + e)
+    } finally {
+        isAdding.value = false
+    }
+}
+
 onMounted(async () => {
     console.log('[MemoryView] Component mounted');
     // Short delay to ensure electron bridge is ready
@@ -114,6 +150,22 @@ onMounted(async () => {
     if (typeof window.electron?.memoryList === 'function') {
         console.log('[MemoryView] Electron API found, loading items...');
         await loadItems();
+
+        // INJECT DEMO ITEM for UI Verification
+        const demoItem: MemoryItem = {
+            id: 'demo-preview',
+            content: "GitHub Personal Access Token\nToken: ghp_ExAmPlEtOkEn123456789\nScope: repo, workflow, user\nExpires: 2026-12-31",
+            encrypted: true,
+            category: 'credential',
+            priority: 'high',
+            tags: ['github', 'security', 'work'],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            metadata: { timestamp: Date.now() }
+        };
+        // Add to beginning of list
+        items.value.unshift(demoItem);
+
     } else {
         console.error('[MemoryView] window.electron.memoryList is not available');
         // Retry once after 1s
@@ -154,14 +206,14 @@ onMounted(async () => {
                     class="px-3 py-1 text-xs font-medium rounded-md transition-all"
                     :class="viewMode === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200'"
                 >
-                    All Items
+                    {{ t('memory.allItems') }}
                 </button>
                 <button 
                     @click="viewMode = 'sources'"
                     class="px-3 py-1 text-xs font-medium rounded-md transition-all"
                     :class="viewMode === 'sources' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200'"
                 >
-                    Sources (Files)
+                    {{ t('memory.sources') }}
                 </button>
             </div>
 
@@ -190,36 +242,13 @@ onMounted(async () => {
 
             <!-- All Items View -->
             <template v-if="viewMode === 'all'">
-                <div 
-                    v-for="item in filteredItems" 
-                    :key="item.id"
-                    class="group relative bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-xl p-4 transition-all duration-200"
-                >
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1 space-y-2">
-                            <p class="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap font-mono">{{ item.content }}</p>
-                            
-                            <div class="flex items-center gap-3 pt-2">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-black/5 text-gray-500">
-                                    ID: {{ item.id.substring(0, 8) }}
-                                </span>
-                                <span v-if="item.metadata.timestamp" class="text-[10px] text-gray-500">
-                                    {{ new Date(item.metadata.timestamp).toLocaleString() }}
-                                </span>
-                                 <span v-if="item.metadata.source" class="text-[10px] text-gray-500">
-                                    Source: {{ item.metadata.source }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <button 
-                            @click="deleteItem(item.id)"
-                            class="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                            title="Delete"
-                        >
-                            <Trash2 class="w-4 h-4" />
-                        </button>
-                    </div>
+                <div class="grid grid-cols-1 gap-4 pb-20">
+                    <MemoryCard 
+                        v-for="item in filteredItems" 
+                        :key="item.id"
+                        :item="item"
+                        @delete="deleteItem"
+                    />
                 </div>
             </template>
 
@@ -237,7 +266,7 @@ onMounted(async () => {
                             </div>
                             <div>
                                 <h4 class="text-sm font-medium text-white">{{ source.name }}</h4>
-                                <p class="text-xs text-gray-500 mt-1">{{ source.count }} chunks stored</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ source.count }} {{ t('memory.chunksStored') }}</p>
                             </div>
                         </div>
 
@@ -246,7 +275,7 @@ onMounted(async () => {
                             class="px-3 py-1.5 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-gray-400 text-xs font-medium rounded-lg transition-colors flex items-center gap-2"
                         >
                              <Trash2 class="w-3.5 h-3.5" />
-                             Delete All
+                             {{ t('memory.deleteAll') }}
                         </button>
                     </div>
                 </div>
@@ -254,46 +283,12 @@ onMounted(async () => {
         </div>
 
         <!-- Add Dialog -->
-        <div v-if="showAddDialog" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div class="w-full max-w-lg bg-[#1a1b1e] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-                <div class="h-14 px-5 border-b border-white/5 flex items-center justify-between bg-white/5">
-                    <h3 class="text-sm font-medium text-white">{{ t('memory.addDialogTitle') }}</h3>
-                    <button @click="showAddDialog = false" class="text-gray-400 hover:text-white transition-colors">
-                        <X class="w-4 h-4" />
-                    </button>
-                </div>
-                
-                <div class="p-5 overflow-y-auto">
-                    <textarea 
-                        v-model="newItemContent"
-                        class="w-full h-48 bg-black/20 border border-white/10 rounded-xl p-4 text-sm text-gray-200 focus:outline-none focus:border-indigo-500/50 focus:bg-black/30 transition-all resize-none placeholder:text-gray-600 font-mono"
-                        :placeholder="t('memory.addPlaceholder')"
-                        autofocus
-                    ></textarea>
-                     <p class="mt-2 text-xs text-gray-500">
-                        This content will be embedded and stored in the vector database for long-term retrieval.
-                    </p>
-                </div>
-
-                <div class="h-16 px-5 border-t border-white/5 flex items-center justify-end gap-3 bg-white/5">
-                    <button 
-                        @click="showAddDialog = false"
-                        class="px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white transition-colors"
-                    >
-                        {{ t('common.cancel') }}
-                    </button>
-                    <button 
-                        @click="addItem"
-                        :disabled="!newItemContent.trim() || isAdding"
-                        class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-2"
-                    >
-                        <div v-if="isAdding" class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <Plus v-else class="w-3.5 h-3.5" />
-                        {{ isAdding ? 'Initializing AI...' : t('common.add') }}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <MemoryDialog
+            v-if="showAddDialog"
+            :initial-content="newItemContent"
+            @save="handleSaveMemory"
+            @close="showAddDialog = false"
+        />
     </div>
 </template>
 

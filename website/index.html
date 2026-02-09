@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iML Agent Desktop | 人人皆可定义的桌面级智能体</title>
+    <meta name="description" content="不仅是对话，更是操作系统的进化。感知窗口、监听文件、驱动软件。iML Agent Desktop 为 AI 注入了真实的桌面生命力。">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;500;600;800&family=Outfit:wght@500;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+    <div class="executive-bg">
+        <div class="noise"></div>
+        <div class="glow-orb" id="orb-1"></div>
+        <div class="glow-orb" id="orb-2"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="container nav-content">
+            <div class="brand">
+                <div class="app-logo">
+                    <span class="logo-top">iML</span>
+                    <span class="logo-btm">AGENT</span>
+                </div>
+                <div class="brand-info">
+                    <span class="p-name">iML Agent Desktop</span>
+                    <span class="p-tag">Early Access v1.0.0</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#solution" data-i18n="nav.solution">解决方案</a>
+                <a href="#execution" data-i18n="nav.execution">执行闭环</a>
+                <a href="#evolution" data-i18n="nav.evolution">技能进化</a>
+                <div class="v-divider"></div>
+                <a href="https://github.com/imoling/iml-agent-desktop" class="gh-icon" target="_blank"><i
+                        data-lucide="github"></i></a>
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="zh">中</button>
+                    <span class="lang-sep">/</span>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Module A: Hero -->
+        <section class="hero" id="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge" data-gsap="reveal">
+                        <span class="badge-dot"></span>
+                        <span class="badge-text" data-i18n="hero.badge">第一性原理</span>
+                    </div>
+                    <h1 class="hero-title" data-gsap="reveal">
+                        <span class="t-line" data-i18n="hero.title">人人皆可定义。</span>
+                    </h1>
+                    <div class="hero-tagline" data-gsap="reveal">
+                        <span data-i18n="hero.tagline.1">感知</span><span class="sep">·</span><span
+                            data-i18n="hero.tagline.2">思考</span><span class="sep">·</span><span
+                            data-i18n="hero.tagline.3">执行</span>
+                    </div>
+                    <p class="hero-subtitle" data-gsap="reveal">
+                        <span class="brand-highlight">iML Agent Desktop</span> <span
+                            data-i18n="hero.subtitle.rest">让每一台电脑都进化为拥有真实意志的桌面级智能体。</span>
+                    </p>
+                    <div class="hero-btns" data-gsap="reveal">
+                        <a href="#" class="btn btn-lg btn-white"><i data-lucide="download"></i> <span
+                                data-i18n="hero.btn.download">下载体验版</span></a>
+                        <a href="#solution" class="btn btn-lg btn-glass"><span data-i18n="hero.btn.more">了解更多</span> <i
+                                data-lucide="arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Hero Product Interface Mockup (Updated to Real Screenshot) -->
+                <div class="hero-mockup-wrapper" data-gsap="mockup">
+                    <div class="mockup-window image-mockup">
+                        <img src="assets/app-screenshot.png" alt="iML Agent Desktop Interface" class="mockup-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module B: Solution Comparison -->
+        <section class="solution" id="solution">
+            <div class="container">
+                <div class="section-head">
+                    <h2 class="section-title" data-i18n="solution.title">对话？不，是掌控。</h2>
+                    <p class="section-sub" data-i18n="solution.sub">越过"只会聊天的 AI"与"现实执行"之间的鸿沟。</p>
+                </div>
+                <div class="compare-grid">
+                    <div class="compare-card silent" data-gsap="fade-up">
+                        <div class="card-tag" data-i18n="solution.card1.tag">TRADITIONAL</div>
+                        <h3 data-i18n="solution.card1.title">传统对话式 AI</h3>
+                        <p data-i18n="solution.card1.desc">禁锢在浏览器标签页，无法感知文件，无法连接外部软件，更无法执行真实的桌面操作。</p>
+                        <div class="card-visual">
+                            <div class="mock-chat-bubble" data-i18n="solution.card1.bubble">“对不起，作为一个 AI
+                                模型，我无法访问您的本地文件...”</div>
+                        </div>
+                    </div>
+                    <div class="compare-card executive" data-gsap="fade-up">
+                        <div class="card-tag">iML AGENT DESKTOP</div>
+                        <h3 data-i18n="solution.card2.title">执行级智能体</h3>
+                        <p data-i18n="solution.card2.desc">拥有原生系统钩子。直接监听文件变动，驱动终端命令，并跨应用完成复杂的自动化编排。</p>
+                        <div class="card-visual">
+                            <div class="mock-action-tags">
+                                <span data-i18n="solution.card2.tag1">监听下载文件夹</span>
+                                <span class="active" data-i18n="solution.card2.tag2">驱动 Shell 脚本</span>
+                                <span data-i18n="solution.card2.tag3">同步 Slack</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module C: Execution Loop -->
+        <section class="execution" id="execution">
+            <div class="container">
+                <div class="p-grid">
+                    <div class="p-item" data-gsap="reveal">
+                        <span class="p-num">01</span>
+                        <div class="p-icon"><i data-lucide="scan-eye"></i></div>
+                        <h3 data-i18n="exec.p1.title">跨端感知</h3>
+                        <p data-i18n="exec.p1.desc">Omni-Perception。监听文件变动、识别活跃应用上下文、读取系统通知及剪切板。它是智能体的眼睛。</p>
+                    </div>
+                    <div class="p-item" data-gsap="reveal">
+                        <span class="p-num">02</span>
+                        <div class="p-icon"><i data-lucide="zap"></i></div>
+                        <h3 data-i18n="exec.p2.title">多维执行</h3>
+                        <p data-i18n="exec.p2.desc">Multi-Execution。从 Shell 脚本到 GUI 模拟，从浏览器自动化到原生应用 API 调用。它是智能体的双手。</p>
+                    </div>
+                    <div class="p-item" data-gsap="reveal">
+                        <span class="p-num">03</span>
+                        <div class="p-icon"><i data-lucide="database"></i></div>
+                        <h3 data-i18n="exec.p3.title">认知持久</h3>
+                        <p data-i18n="exec.p3.desc">Vectra Persistence。将系统中流转的所有碎片化信息，转化为可检索的本地向量数据库。它是智能体的大脑。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module D: Showcase Showcase -->
+        <section class="showcase" id="showcase">
+            <div class="container">
+                <div class="section-head" data-gsap="fade-up">
+                    <h2 class="section-title" data-i18n="showcase.title">当思考变得可见。</h2>
+                    <p class="section-sub" data-i18n="showcase.sub">拒绝黑盒。实时追踪智能体的每一次推理与行动。</p>
+                </div>
+                <div class="mock-os-window" data-gsap="window-float">
+                    <div class="window-bar">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="title">Cross-App Workflow</div>
+                    </div>
+                    <div class="window-body">
+                        <div class="trace-container">
+                            <div class="trace-track">
+                                <div class="trace-pulse"></div>
+                            </div>
+                            <!-- Step 1: Thinking -->
+                            <div class="trace-step" id="t-think">
+                                <div class="trace-icon"><i data-lucide="brain-circuit"></i></div>
+                                <div class="trace-info">
+                                    <div class="trace-label">Thinking Process</div>
+                                    <div class="trace-desc">Reasoning: Analyzing user intent and system context...</div>
+                                    <div class="trace-progress">
+                                        <div class="t-bar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Step 2: Planning -->
+                            <div class="trace-step" id="t-plan">
+                                <div class="trace-icon"><i data-lucide="list-checks"></i></div>
+                                <div class="trace-info">
+                                    <div class="trace-label">Execution Plan</div>
+                                    <div class="trace-plan-list">
+                                        <div class="t-plan-item"><i data-lucide="check" class="done"></i> 检索本地知识库</div>
+                                        <div class="t-plan-item"><i data-lucide="check" class="done"></i> 跨应用调用浏览器插件
+                                        </div>
+                                        <div class="t-plan-item"><i data-lucide="loader-2" class="spinning"></i> 生成周报产物
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Step 3: Action -->
+                            <div class="trace-step" id="t-action">
+                                <div class="trace-icon"><i data-lucide="zap"></i></div>
+                                <div class="trace-info">
+                                    <div class="trace-label">Multi-Execution Actions</div>
+                                    <div class="trace-skill-badges">
+                                        <span class="t-skill"><i data-lucide="terminal"></i> Shell</span>
+                                        <span class="t-skill"><i data-lucide="globe"></i> Browser</span>
+                                        <span class="t-skill"><i data-lucide="copy"></i> Desktop API</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Step 4: Output -->
+                            <div class="trace-step" id="t-output">
+                                <div class="trace-icon"><i data-lucide="file-check"></i></div>
+                                <div class="trace-info">
+                                    <div class="trace-label">Result & Artifacts</div>
+                                    <div class="trace-artifact-card">
+                                        <i data-lucide="file-text"></i>
+                                        <span>Weekly_Report_V1.pdf</span>
+                                        <div class="trace-btn-sm">Preview</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Step 5: Follow-up -->
+                            <div class="trace-step" id="t-next">
+                                <div class="trace-icon"><i data-lucide="message-square-more"></i></div>
+                                <div class="trace-info">
+                                    <div class="trace-label">Follow-up Suggestions</div>
+                                    <div class="trace-suggestions">
+                                        <span class="t-chip">发送到 Slack</span>
+                                        <span class="t-chip">归档到 Notion</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module E: Evolution -->
+        <section class="evolution" id="evolution">
+            <div class="container">
+                <div class="section-head" data-gsap="fade-up">
+                    <h2 class="section-title" data-i18n="evolution.title">技能，自我进化。</h2>
+                    <p class="section-sub" data-i18n="evolution.sub">不再受限于预置。让能力跟随需求，实时生长。</p>
+                </div>
+                <div class="evo-box">
+                    <!-- Left Column: Text & Input -->
+                    <div class="evo-text">
+                        <h3 id="evo-title" data-i18n="evolution.evo1.title">一句话，定义新能力</h3>
+                        <p id="evo-desc" data-i18n="evolution.evo1.desc">描述您的需求，系统实时生成标准技能插件。</p>
+                        <div class="prompt-input-mock" id="evo-input">
+                            <span class="cursor">_</span>
+                        </div>
+                        <!-- Preview Zone: Code morphs into Card -->
+                        <div class="preview-zone">
+                            <!-- Code Previews (stacked at same position) -->
+                            <div class="skill-tree-preview" id="skill-code">
+                                <pre><span class="tree-folder">📁 image-optimizer/</span>
+├── <span class="tree-file">SKILL.md</span>
+├── <span class="tree-folder">scripts/</span>
+│   └── compress.py
+├── <span class="tree-folder">templates/</span>
+└── reference.md</pre>
+                            </div>
+                            <div class="workflow-tree-preview" id="workflow-graph">
+                                <pre>{
+  <span class="json-key">"id"</span>: <span class="json-str">"competitive-report"</span>,
+  <span class="json-key">"name"</span>: <span class="json-str">"竞品分析周报"</span>,
+  <span class="json-key">"steps"</span>: [
+    { <span class="json-key">"type"</span>: <span class="json-str">"skill"</span>, <span class="json-key">"skillId"</span>: <span class="json-str">"browser"</span> },
+    { <span class="json-key">"type"</span>: <span class="json-str">"llm"</span>, <span class="json-key">"prompt"</span>: <span class="json-str">"分析..."</span> }
+  ]
+}</pre>
+                            </div>
+                            <!-- Cards (same position, morph from code) -->
+                            <div class="floating-skill-card morph-card" id="new-skill-card">
+                                <i data-lucide="folder-plus" class="card-icon-lg"></i>
+                                <span>image-optimizer</span>
+                            </div>
+                            <div class="floating-skill-card theme-workflow morph-card" id="new-workflow-card">
+                                <i data-lucide="git-branch" class="card-icon-lg"></i>
+                                <span>competitive-report</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Skill Matrix -->
+                    <div class="evo-visual">
+                        <div class="skill-matrix-container">
+                            <div class="skill-matrix">
+                                <div class="skill-slot active"><i data-lucide="code-2"></i></div>
+                                <div class="skill-slot active"><i data-lucide="globe"></i></div>
+                                <div class="skill-slot active"><i data-lucide="file-search"></i></div>
+                                <div class="skill-slot active"><i data-lucide="terminal"></i></div>
+                                <div class="skill-slot empty animate-slot" id="target-slot"></div>
+                                <div class="skill-slot active"><i data-lucide="mail"></i></div>
+                                <div class="skill-slot active"><i data-lucide="calendar"></i></div>
+                                <div class="skill-slot empty animate-slot" id="target-slot-b"></div>
+                                <div class="skill-slot active"><i data-lucide="share-2"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module F: Privacy -->
+        <section class="privacy" id="privacy">
+            <div class="container">
+                <div class="section-head" data-gsap="fade-up">
+                    <h2 class="section-title" data-i18n="privacy.title">隐私，第一原则。</h2>
+                    <p class="section-sub" data-i18n="privacy.sub">数据不出本地。主权归你所有。</p>
+                </div>
+                <div class="privacy-hero" data-gsap="fade-up">
+                    <div class="privacy-shield">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <h3 data-i18n="privacy.main">Local First, Privacy Always.</h3>
+                    <p data-i18n="privacy.desc">您的指令、数据、记忆与执行日志，100% 留存在您的本地。没有任何信息会被上传至第三方云端进行训练。</p>
+                    <div class="privacy-badges">
+                        <div class="badge"><i data-lucide="hard-drive"></i><span data-i18n="privacy.badge.1">本地存储</span>
+                        </div>
+                        <div class="badge"><i data-lucide="lock-keyhole"></i><span
+                                data-i18n="privacy.badge.2">端到端加密</span></div>
+                        <div class="badge"><i data-lucide="eye-off"></i><span data-i18n="privacy.badge.3">零追踪</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="f-brand">
+                <div class="app-logo sm">iM</div>
+                <span>iML Agent Desktop</span>
+            </div>
+            <div class="f-contact">
+                <a href="mailto:imoling.cn@gmail.com"><i data-lucide="mail"></i></a>
+                <a href="https://x.com/imolingcn" target="_blank"><i data-lucide="twitter"></i></a>
+            </div>
+            <div class="f-meta">
+                <span>© 2026 UI Design & Logic by Kang Wei（imoling）& Coding by Antigravity</span>
+                <span class="cc">Early Access v1.0.0</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Common reveal
+        gsap.from("[data-gsap='reveal']", {
+            y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", scrollTrigger: { trigger: "[data-gsap='reveal']", start: "top 90%" }
+        });
+
+        gsap.utils.toArray("[data-gsap='fade-up']").forEach(el => {
+            gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
+        });
+
+        // Window float
+        gsap.from("[data-gsap='window-float']", {
+            y: 60, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: "[data-gsap='window-float']", start: "top 80%" }
+        });
+
+        // Orbs movement
+        gsap.to("#orb-1", { x: 50, y: 100, duration: 20, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        gsap.to("#orb-2", { x: -50, y: -80, duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+        // Module D: Showcase Refined - Execution Loop
+        const traceTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".trace-container",
+                start: "top 70%",
+            },
+            repeat: -1,
+            repeatDelay: 3
+        });
+
+        // Initialize state
+        traceTimeline.set(".trace-pulse", { top: "-120px", opacity: 0 });
+        traceTimeline.set(".trace-step", { className: "trace-step" }); // Clear active class
+        traceTimeline.set(".t-skill", { opacity: 0, y: 10 });
+        traceTimeline.set(".trace-artifact-card", { opacity: 0, x: 20 });
+        traceTimeline.set(".t-chip", { opacity: 0, scale: 0.8 });
+
+        // 1. Reveal Pulse
+        traceTimeline.to(".trace-pulse", { opacity: 1, duration: 0.4, ease: "power2.out" });
+
+        // 2. Execution Flow
+        const steps = document.querySelectorAll(".trace-step");
+
+        // Pulse travels down the entire track
+        traceTimeline.to(".trace-pulse", {
+            top: "120%",
+            duration: 6,
+            ease: "linear"
+        }, "start");
+
+        // Step 1: Thinking
+        traceTimeline.add(() => { steps[0].classList.add('active'); }, "start+=0.5");
+        traceTimeline.fromTo(steps[0].querySelector(".t-bar"),
+            { width: "0%" },
+            { width: "100%", duration: 1.5, ease: "power2.inOut" },
+            "start+=0.5");
+
+        // Step 2: Planning
+        traceTimeline.add(() => { steps[1].classList.add('active'); }, "start+=2.0");
+        // CSS handles list item delays via nth-child
+
+        // Step 3: Action
+        traceTimeline.add(() => { steps[2].classList.add('active'); }, "start+=3.2");
+        traceTimeline.to(steps[2].querySelectorAll(".t-skill"), {
+            opacity: 1, y: 0, stagger: 0.15, duration: 0.5, ease: "back.out(1.7)"
+        }, "start+=3.4");
+
+        // Step 4: Output
+        traceTimeline.add(() => { steps[3].classList.add('active'); }, "start+=4.4");
+        traceTimeline.to(steps[3].querySelector(".trace-artifact-card"), {
+            opacity: 1, x: 0, duration: 0.8, ease: "power3.out"
+        }, "start+=4.6");
+
+        // Step 5: Follow-up
+        traceTimeline.add(() => { steps[4].classList.add('active'); }, "start+=5.4");
+        traceTimeline.to(steps[4].querySelectorAll(".t-chip"), {
+            opacity: 1, scale: 1, stagger: 0.1, duration: 0.5, ease: "back.out(1.5)"
+        }, "start+=5.6");
+
+
+        // Module E: Evolution - Dual Mode Animation
+        const evoTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".evolution",
+                start: "top 60%",
+            },
+            repeat: -1,
+        });
+
+        // Helper: Reset All States
+        function resetEvoState() {
+            // Reset cards - let CSS handle position, only reset opacity/scale/rotation
+            gsap.set("#new-skill-card, #new-workflow-card", {
+                opacity: 0,
+                scale: 0.5,
+                rotation: 0,
+                clearProps: "x,y" // Clear GSAP x/y so CSS left/top takes effect
+            });
+            // Reset tree previews
+            gsap.set(".skill-tree-preview, .workflow-tree-preview", { opacity: 0, scale: 1, y: 10, clearProps: "x" });
+            // Reset slots
+            gsap.set("#target-slot, #target-slot-b", {
+                className: "skill-slot empty animate-slot",
+                innerHTML: "",
+                backgroundColor: "transparent",
+                borderColor: "rgba(255, 255, 255, 0.1)",
+                boxShadow: "none",
+                scale: 1
+            });
+            // Reset input
+            gsap.set("#evo-input", { borderColor: "rgba(255,255,255,0.1)", boxShadow: "none" });
+            document.querySelector("#evo-input").innerHTML = '<span class="cursor">_</span>';
+            // Reset Title/Desc
+            document.querySelector("#evo-title").textContent = "一句话，定义新能力";
+            document.querySelector("#evo-desc").textContent = "描述您的需求，系统实时生成标准技能插件。";
+        }
+
+        evoTimeline.add(resetEvoState);
+
+        // === SEQUENCE 1: SKILL GENERATION (Purple) ===
+
+        // 1. Type prompt
+        evoTimeline.add(() => {
+            const promptText = currentLang === 'en' ? '"Write a skill to auto-compress and upload to OSS"' : '"帮我写一个自动压缩上传 OSS 的技能"';
+            document.querySelector("#evo-input").innerHTML = promptText + '<span class="cursor">_</span>';
+        }, "+=0.3");
+        evoTimeline.to("#evo-input", { borderColor: "rgba(139, 92, 246, 0.6)", boxShadow: "0 0 25px rgba(139, 92, 246, 0.2)", duration: 0.5 });
+        evoTimeline.to(".cursor", { opacity: 0, duration: 0.08, repeat: 5, yoyo: true });
+
+        // 2. Show Code Preview
+        evoTimeline.to(".skill-tree-preview", { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.4)" });
+
+        // 3. Hold for reading
+        evoTimeline.to({}, { duration: 1.0 });
+
+        // 4. Morph: Code shrinks to center, card pops out at same position
+        evoTimeline.to(".skill-tree-preview", {
+            scale: 0.1,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power3.in"
+        });
+        evoTimeline.to("#new-skill-card", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.6)"
+        }, "-=0.15");
+
+        // 5. Hold card visible
+        evoTimeline.to({}, { duration: 0.5 });
+
+        // 6. Fly card to Slot A
+        evoTimeline.to("#new-skill-card", {
+            x: 400, y: 0,
+            scale: 0.3, opacity: 0, rotation: 15,
+            duration: 0.9, ease: "power3.inOut"
+        });
+
+        // 5. Activate Slot A
+        evoTimeline.add(() => {
+            const s = document.querySelector("#target-slot");
+            s.classList.remove("empty"); s.classList.add("active");
+            s.innerHTML = '<i data-lucide="folder-plus"></i>';
+            lucide.createIcons();
+        }, "-=0.3");
+        evoTimeline.to("#target-slot", {
+            scale: 1.3, backgroundColor: "rgba(139, 92, 246, 0.7)", borderColor: "#fff", boxShadow: "0 0 50px rgba(139, 92, 246, 1)",
+            duration: 0.25, yoyo: true, repeat: 1
+        });
+
+        // 6. Transition: Update Title/Desc for Workflow Mode
+        evoTimeline.to("#evo-input", { borderColor: "rgba(255,255,255,0.1)", boxShadow: "none", duration: 0.4 }, "+=0.8");
+        evoTimeline.add(() => {
+            document.querySelector("#evo-input").innerHTML = '<span class="cursor">_</span>';
+            document.querySelector("#evo-title").textContent = i18n[currentLang]["evolution.evo2.title"];
+            document.querySelector("#evo-desc").textContent = i18n[currentLang]["evolution.evo2.desc"];
+        });
+
+        // === SEQUENCE 2: WORKFLOW GENERATION (Cyan) ===
+
+        // 1. Type dialogue prompt
+        evoTimeline.add(() => {
+            const userLabel = currentLang === 'en' ? 'User:' : 'User:';
+            const promptText = currentLang === 'en' ? 'Analyze competitors and create a weekly report' : '帮我分析竞品并整理成周报';
+            document.querySelector("#evo-input").innerHTML = '<span style="color:#0ea5e9">' + userLabel + '</span> ' + promptText + '<span class="cursor">_</span>';
+        }, "+=0.3");
+        evoTimeline.to("#evo-input", { borderColor: "rgba(14, 165, 233, 0.6)", boxShadow: "0 0 25px rgba(14, 165, 233, 0.2)", duration: 0.5 });
+        evoTimeline.to(".cursor", { opacity: 0, duration: 0.08, repeat: 5, yoyo: true });
+
+        // 2. Show Workflow Code Preview
+        evoTimeline.to(".workflow-tree-preview", { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.4)" });
+
+        // 3. Hold for reading
+        evoTimeline.to({}, { duration: 1.0 });
+
+        // 4. Morph: Code shrinks to center, card pops out
+        evoTimeline.to(".workflow-tree-preview", {
+            scale: 0.1,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power3.in"
+        });
+        evoTimeline.to("#new-workflow-card", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.6)"
+        }, "-=0.15");
+
+        // 5. Hold card visible
+        evoTimeline.to({}, { duration: 0.5 });
+
+        // 6. Fly card to Slot B
+        evoTimeline.to("#new-workflow-card", {
+            x: 400, y: 100,
+            scale: 0.3, opacity: 0, rotation: -15,
+            duration: 0.9, ease: "power3.inOut"
+        });
+
+        // 5. Activate Slot B
+        evoTimeline.add(() => {
+            const s = document.querySelector("#target-slot-b");
+            s.classList.remove("empty"); s.classList.add("active");
+            s.style.background = "rgba(14, 165, 233, 0.15)";
+            s.style.borderColor = "rgba(14, 165, 233, 0.5)";
+            s.innerHTML = '<i style="color:#0ea5e9" data-lucide="git-branch"></i>';
+            lucide.createIcons();
+        }, "-=0.3");
+        evoTimeline.to("#target-slot-b", {
+            scale: 1.3, backgroundColor: "rgba(14, 165, 233, 0.7)", borderColor: "#fff", boxShadow: "0 0 50px rgba(14, 165, 233, 1)",
+            duration: 0.25, yoyo: true, repeat: 1
+        });
+
+        // Final reset for loop
+        evoTimeline.to("#evo-input", { borderColor: "rgba(255,255,255,0.1)", boxShadow: "none", duration: 0.4 }, "+=1");
+        evoTimeline.add(resetEvoState);
+
+        // ===================
+        // i18n Internationalization
+        // ===================
+        const i18n = {
+            zh: {
+                "nav.solution": "解决方案",
+                "nav.execution": "执行闭环",
+                "nav.evolution": "技能进化",
+                "hero.badge": "第一性原理",
+                "hero.title": "人人皆可定义。",
+                "hero.tagline.1": "感知",
+                "hero.tagline.2": "思考",
+                "hero.tagline.3": "执行",
+                "hero.subtitle": "iML Agent Desktop 让每一台电脑都进化为拥有真实意志的桌面级智能体。",
+                "hero.subtitle.rest": "让每一台电脑都进化为拥有真实意志的桌面级智能体。",
+                "hero.btn.download": "下载体验版",
+                "hero.btn.more": "了解更多",
+                "solution.title": "对话？不，是掌控。",
+                "solution.sub": '越过"只会聊天的 AI"与"现实执行"之间的鸿沟。',
+                "solution.card1.tag": "TRADITIONAL",
+                "solution.card1.title": "传统对话式 AI",
+                "solution.card1.desc": "禁锢在浏览器标签页，无法感知文件，无法连接外部软件，更无法执行真实的桌面操作。",
+                "solution.card1.bubble": '"对不起，作为一个 AI 模型，我无法访问您的本地文件..."',
+                "solution.card2.title": "执行级智能体",
+                "solution.card2.desc": "拥有原生系统钩子。直接监听文件变动，驱动终端命令，并跨应用完成复杂的自动化编排。",
+                "solution.card2.tag1": "监听下载文件夹",
+                "solution.card2.tag2": "驱动 Shell 脚本",
+                "solution.card2.tag3": "同步 Slack",
+                "exec.p1.title": "跨端感知",
+                "exec.p1.desc": "Omni-Perception。监听文件变动、识别活跃应用上下文、读取系统通知及剪切板。它是智能体的眼睛。",
+                "exec.p2.title": "多维执行",
+                "exec.p2.desc": "Multi-Execution。从 Shell 脚本到 GUI 模拟，从浏览器自动化到原生应用 API 调用。它是智能体的双手。",
+                "exec.p3.title": "认知持久",
+                "exec.p3.desc": "Vectra Persistence。将系统中流转的所有碎片化信息，转化为可检索的本地向量数据库。它是智能体的大脑。",
+                "showcase.title": "当思考变得可见。",
+                "showcase.sub": "拒绝黑盒。实时追踪智能体的每一次推理与行动。",
+                "evolution.title": "技能，自我进化。",
+                "evolution.sub": "不再受限于预置。让能力跟随需求，实时生长。",
+                "evolution.evo1.title": "一句话，定义新能力",
+                "evolution.evo1.desc": "描述您的需求，系统实时生成标准技能插件。",
+                "evolution.evo2.title": "对话即工作流",
+                "evolution.evo2.desc": "交互对话，一键生成标准工作流。",
+                "privacy.title": "隐私，第一原则。",
+                "privacy.sub": "数据不出本地。主权归你所有。",
+                "privacy.main": "本地优先，隐私至上。",
+                "privacy.desc": "您的指令、数据、记忆与执行日志，100% 留存在您的本地。没有任何信息会被上传至第三方云端进行训练。",
+                "privacy.badge.1": "本地存储",
+                "privacy.badge.2": "端到端加密",
+                "privacy.badge.3": "零追踪"
+            },
+            en: {
+                "nav.solution": "Solution",
+                "nav.execution": "Execution",
+                "nav.evolution": "Evolution",
+                "hero.badge": "First Principles",
+                "hero.title": "Define Your Agent.",
+                "hero.tagline.1": "Perceive",
+                "hero.tagline.2": "Think",
+                "hero.tagline.3": "Execute",
+                "hero.subtitle": "iML Agent Desktop transforms every computer into a desktop-level intelligent agent with real will.",
+                "hero.subtitle.rest": "transforms every computer into a desktop-level intelligent agent with real will.",
+                "hero.btn.download": "Download Beta",
+                "hero.btn.more": "Learn More",
+                "solution.title": "Dialogue? No, Control.",
+                "solution.sub": "Bridge the gap between 'chat-only AI' and real-world execution.",
+                "solution.card1.tag": "TRADITIONAL",
+                "solution.card1.title": "Traditional Chatbot AI",
+                "solution.card1.desc": "Trapped in browser tabs. Cannot access files, connect to external software, or perform real desktop operations.",
+                "solution.card1.bubble": '"Sorry, as an AI model, I cannot access your local files..."',
+                "solution.card2.title": "Execution-Level Agent",
+                "solution.card2.desc": "With native system hooks. Directly monitor file changes, drive terminal commands, and orchestrate complex automation across apps.",
+                "solution.card2.tag1": "Watch Downloads",
+                "solution.card2.tag2": "Run Shell Scripts",
+                "solution.card2.tag3": "Sync to Slack",
+                "exec.p1.title": "Omni-Perception",
+                "exec.p1.desc": "Monitor file changes, identify active app context, read system notifications and clipboard. The eyes of the agent.",
+                "exec.p2.title": "Multi-Execution",
+                "exec.p2.desc": "From Shell scripts to GUI automation, from browser control to native app API calls. The hands of the agent.",
+                "exec.p3.title": "Vectra Persistence",
+                "exec.p3.desc": "Transform all fragmented information flowing through the system into a searchable local vector database. The brain of the agent.",
+                "showcase.title": "When Thinking Becomes Visible.",
+                "showcase.sub": "No more black boxes. Track every reasoning and action in real-time.",
+                "evolution.title": "Skills, Self-Evolving.",
+                "evolution.sub": "No longer limited by presets. Let capabilities grow with your needs.",
+                "evolution.evo1.title": "One Sentence, Define New Skills",
+                "evolution.evo1.desc": "Describe your needs, generate standard skill plugins in real-time.",
+                "evolution.evo2.title": "Dialogue as Workflow",
+                "evolution.evo2.desc": "Interactive conversation, one-click workflow generation.",
+                "privacy.title": "Privacy, First Principle.",
+                "privacy.sub": "Data stays local. Sovereignty is yours.",
+                "privacy.main": "Local First, Privacy Always.",
+                "privacy.desc": "Your commands, data, memory, and execution logs stay 100% on your device. No information is uploaded to third-party clouds for training.",
+                "privacy.badge.1": "Local Storage",
+                "privacy.badge.2": "E2E Encrypted",
+                "privacy.badge.3": "Zero Tracking"
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.textContent = i18n[lang][key];
+                }
+            });
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            // Reset Evolution title/desc to first sequence (in case animation changed them)
+            document.querySelector("#evo-title").textContent = i18n[lang]["evolution.evo1.title"];
+            document.querySelector("#evo-desc").textContent = i18n[lang]["evolution.evo1.desc"];
+        }
+
+        // Language switcher click handler
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+        });
+    </script>
+</body>
+
+</html>

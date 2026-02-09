@@ -2,7 +2,7 @@ const fs = require('fs');
 
 // Read input from arguments
 const args = JSON.parse(process.argv[2] || '{}');
-const { action, content, query, limit } = args;
+const { action, content, query, limit, category, priority, tags, encrypted, expires_in } = args;
 
 // Validation
 if (!action) {
@@ -61,7 +61,18 @@ function sendRequest(type, payload) {
             await sendRequest('memory-request', {
                 action: 'add',
                 content,
-                metadata: { source: 'user-input', date: new Date().toISOString() }
+                // Pass rich metadata to MemoryManager
+                metadata: {
+                    source: 'knowledge-base-skill',
+                    date: new Date().toISOString()
+                },
+                options: {
+                    category,
+                    priority,
+                    tags,
+                    encrypted,
+                    expiresAt: expires_in ? Date.now() + (expires_in * 1000) : undefined
+                }
             });
             output = "Successfully added to memory.";
         } else if (action === 'search') {

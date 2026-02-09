@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
-import { X, FileText, Box, Clock, FileJson, FileCode, FileImage, FolderOpen, Folder, File, BrainCircuit, Loader2, Bot, Zap, Presentation, FileVideo, FileAudio, FileSpreadsheet } from 'lucide-vue-next'
+import { X, FileText, Box, Clock, FileJson, FileCode, FileImage, FolderOpen, Folder, File, BrainCircuit, Loader2, Bot, Zap, Presentation, FileVideo, FileAudio, FileSpreadsheet, ExternalLink, AlertCircle } from 'lucide-vue-next'
 import { useChatStore } from '../stores/chat'
 import { useSkillsStore } from '../stores/skills'
 import { storeToRefs } from 'pinia'
@@ -11,6 +11,27 @@ const chatStore = useChatStore()
 const skillsStore = useSkillsStore()
 const { artifacts, workingDirectory } = storeToRefs(chatStore)
 
+// Token usage computed properties
+const tokenPercentage = computed(() => {
+    const safeLimit = 120000 // Match the safe limit from ChatInterface
+    return Math.min((chatStore.sessionDetails.total / safeLimit) * 100, 100)
+})
+
+const tokenStatus = computed(() => {
+    const safeLimit = 120000
+    if (chatStore.sessionDetails.total > safeLimit) return 'danger'
+    if (chatStore.sessionDetails.total > safeLimit * 0.8) return 'warning'
+    return 'safe'
+})
+
+const tokenStatusColor = computed(() => {
+    switch (tokenStatus.value) {
+        case 'danger': return 'bg-red-500'
+        case 'warning': return 'bg-yellow-500'
+        default: return 'bg-emerald-500'
+    }
+})
+
 const activeSkillsObjects = computed(() => {
     // chatStore.activeSkills is an array of strings (names)
     // skillsStore.skills is an array of Skill objects
@@ -19,7 +40,7 @@ const activeSkillsObjects = computed(() => {
 })
 
 const activeTab = ref<'artifacts' | 'context' | 'files'>('artifacts')
-// ... (rest of logic)
+
 const files = ref<Array<{ name: string; isDirectory: boolean; path: string }>>([])
 const isLoadingFiles = ref(false)
 const processingFiles = ref<Set<string>>(new Set()) // Track files being added to memory
@@ -59,6 +80,14 @@ const openFile = async (path: string) => {
         await window.electron.openFile(path)
     } catch (e) {
         console.error('Failed to open file:', e)
+    }
+}
+
+const openFolder = async (path: string) => {
+    try {
+        await window.electron.showItemInFolder(path)
+    } catch (e) {
+        console.error('Failed to open folder:', e)
     }
 }
 
@@ -183,9 +212,29 @@ window.addEventListener('click', closeContextMenu)
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-medium truncate" style="color: var(--text-primary)">{{ artifact.name }}</p>
                         <p class="text-[10px] truncate mt-0.5" style="color: var(--text-muted)">{{ artifact.path }}</p>
-                        <div class="flex items-center gap-1 mt-1 text-[10px]" style="color: var(--text-secondary)">
-                            <Clock class="w-3 h-3" />
-                            {{ formatTime(artifact.createdAt) }}
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex items-center gap-1 text-[10px]" style="color: var(--text-secondary)">
+                                <Clock class="w-3 h-3" />
+                                {{ formatTime(artifact.createdAt) }}
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="flex items-center gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                    @click.stop="openFile(artifact.path)" 
+                                    class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    :title="t('rightDrawer.openFile')"
+                                >
+                                    <ExternalLink class="w-3.5 h-3.5 text-indigo-500" />
+                                </button>
+                                <button 
+                                    @click.stop="openFolder(artifact.path)" 
+                                    class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    :title="t('rightDrawer.openFolder')"
+                                >
+                                    <FolderOpen class="w-3.5 h-3.5 text-emerald-500" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -235,6 +284,46 @@ window.addEventListener('click', closeContextMenu)
                     </p>
                 </div>
             </div>
+
+            <!-- Token Usage Card -->
+            <div>
+                <h3 class="text-xs font-medium uppercase tracking-wider mb-2 px-1" style="color: var(--text-muted)">
+                    Token 使用情况
+                </h3>
+                <div class="rounded-lg p-3 space-y-3" style="background-color: var(--bg-surface)">
+                    <!-- Token Count -->
+                    <div class="flex justify-between items-center border-0">
+                        <span class="text-xs" style="color: var(--text-secondary)">当前使用</span>
+                        <span class="text-sm font-mono font-medium text-indigo-400">
+                            {{ chatStore.sessionDetails.total.toLocaleString() }} / 120,000
+                        </span>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="relative h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div 
+                            :class="['h-full transition-all duration-300', tokenStatusColor]"
+                            :style="{ width: `${tokenPercentage}%` }"
+                        />
+                    </div>
+                    
+                    <!-- Status Indicator -->
+                    <div class="flex items-center justify-between text-xs border-0">
+                        <div class="flex items-center gap-1.5">
+                            <AlertCircle class="w-3.5 h-3.5" :class="tokenStatus === 'danger' ? 'text-red-400' : tokenStatus === 'warning' ? 'text-yellow-400' : 'text-emerald-400'" />
+                            <span :class="tokenStatus === 'danger' ? 'text-red-400' : tokenStatus === 'warning' ? 'text-yellow-400' : 'text-emerald-400'">
+                                {{ tokenStatus === 'danger' ? '超出限制' : tokenStatus === 'warning' ? '接近限制' : '正常' }}
+                            </span>
+                        </div>
+                        <span style="color: var(--text-muted)">
+                            {{ tokenPercentage.toFixed(1) }}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+
 
             <!-- Session Stats Card -->
             <div>

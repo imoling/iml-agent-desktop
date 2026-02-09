@@ -1,7 +1,25 @@
 ---
 name: pptx
 display_name: 幻灯片制作
-description: "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks"
+description: |
+  CRITICAL: This skill converts HTML to PPTX. You MUST generate HTML with MULTIPLE slides using <div class="p-slide"> for EACH slide.
+  DO NOT generate single-page scrolling HTML - that will result in a blank or single-slide PPTX.
+  
+  MANDATORY STEP BEFORE GENERATING HTML:
+  1. Read the template file: /Users/imoling/projects/iml-agent-desktop/skills/pptx/examples/template-3-slides.html
+  2. Use read-file skill to view this template
+  3. Follow the EXACT structure shown in the template
+  4. Each <div class="p-slide"> becomes ONE PowerPoint slide
+  
+  Use this skill when you need to:
+  1. Create multi-slide presentations (.pptx files)
+  2. Convert structured content into PowerPoint format
+  3. Generate visual reports with multiple pages
+  
+  WORKFLOW:
+  Step 1: Read template file with read-file skill
+  Step 2: Use write-file skill to create HTML following template structure
+  Step 3: Call this skill with action='create' to convert HTML to PPTX
 default_in_chat: true
 version: 1.0.0
 parameters:
@@ -24,6 +42,145 @@ parameters:
 
 # 幻灯片制作 (PPTX)
 Presentation creation, editing, and analysis.
+
+## ⚠️ CRITICAL REQUIREMENTS FOR HTML GENERATION
+
+**YOU MUST FOLLOW THESE RULES OR THE PPTX WILL BE BLANK/BROKEN:**
+
+1. **NEVER generate single-page scrolling HTML** - This is the most common mistake!
+2. **ALWAYS use `<div class="p-slide">` for EACH slide** - One div = one PowerPoint slide
+3. **Each slide MUST be exactly 960px × 540px** (16:9 aspect ratio)
+4. **Use absolute positioning or flexbox WITHIN each .p-slide div**
+
+### ❌ WRONG (Single-Page Scrolling):
+```html
+<body>
+  <div class="container">
+    <h1>Title</h1>
+    <div class="section">Content 1</div>
+    <div class="section">Content 2</div>
+    <div class="section">Content 3</div>
+  </div>
+</body>
+```
+
+### ✅ CORRECT (Multi-Slide Structure):
+```html
+<body>
+  <!-- Slide 1 -->
+  <div class="p-slide">
+    <h1 style="position: absolute; top: 200px; left: 300px;">Title Slide</h1>
+  </div>
+  
+  <!-- Slide 2 -->
+  <div class="p-slide">
+    <h2 style="position: absolute; top: 50px; left: 50px;">Content 1</h2>
+    <p style="position: absolute; top: 150px; left: 50px;">Details...</p>
+  </div>
+  
+  <!-- Slide 3 -->
+  <div class="p-slide">
+    <h2 style="position: absolute; top: 50px; left: 50px;">Content 2</h2>
+  </div>
+</body>
+```
+
+## 🚨 CRITICAL SIZE AND CONTENT CONSTRAINTS
+
+**THESE ARE NON-NEGOTIABLE RULES:**
+
+### 1. Slide Dimensions
+- **MUST be EXACTLY 960px × 540px** (16:9 aspect ratio)
+- ❌ DO NOT use 1024x768, 1920x1080, or any other size
+- ❌ DO NOT use percentage-based widths/heights
+
+### 2. Padding and Margins
+- **MAXIMUM padding: 40px** on `.p-slide`
+- Use `box-sizing: border-box` to include padding in dimensions
+- Leave at least 40px margin from all edges for content
+
+### 3. Content Limits Per Slide
+- **Title**: Maximum 48px font size
+- **Body text**: Maximum 24px font size
+- **Maximum content blocks**: 4-6 items per slide
+- **Grid layouts**: Maximum 2×2 (4 cards) or 3×1 (3 cards)
+- ❌ DO NOT cram too much content - it WILL overflow
+
+### 4. Font Sizes (Recommended)
+- **H1 (Cover)**: 48-60px
+- **H2 (Section Title)**: 32-40px
+- **H3 (Card Title)**: 20-24px
+- **Body Text**: 16-20px
+- **Footer**: 12-14px
+
+### 5. Safe Content Area
+- **Effective content area**: 880px × 460px (after 40px padding)
+- Keep all important content within this area
+- Use `overflow: hidden` on `.p-slide` to prevent spillover
+
+### 6. Testing Your HTML
+Before calling the pptx skill, verify:
+```bash
+# Check slide count
+grep -c 'class="p-slide"' your-file.html
+
+# Check dimensions
+grep 'width: 960px' your-file.html
+grep 'height: 540px' your-file.html
+```
+
+## 🔧 CRITICAL CONVERSION REQUIREMENTS
+
+**The html2pptx converter has specific requirements. Follow these EXACTLY:**
+
+### 1. Layout Strategy
+- ❌ **DO NOT use CSS Grid or Flexbox for main layout**
+- ✅ **USE absolute positioning for ALL content elements**
+- ✅ **USE `position: absolute` with explicit `top`, `left`, `width`, `height`**
+
+### 2. Content Boxes (DIVs)
+- ✅ **ALL content DIVs MUST have explicit `background` color**
+- ✅ **Even white backgrounds must be specified: `background: white`**
+- ❌ **Transparent or `rgba(0,0,0,0)` backgrounds will be IGNORED**
+- ✅ **Add visible borders if background is subtle: `border-left: 5px solid #color`**
+- ❌ **CSS gradients (linear-gradient, radial-gradient) are NOT supported**
+- ✅ **Use solid colors only: `background: #4facfe` instead of `background: linear-gradient(...)`**
+
+### 3. Text Elements
+- ✅ **Use direct P, H1, H2, H3 tags** (not nested deep in DIVs)
+- ✅ **Give text elements absolute positioning**
+- ✅ **Use inline styles, not CSS classes**
+- ❌ **Avoid complex nesting** (max 2 levels deep)
+
+### 4. Example Structure (CORRECT):
+```html
+<div class="p-slide">
+  <!-- Title with absolute position -->
+  <h2 style="position: absolute; top: 40px; left: 40px; font-size: 36px;">
+    Section Title
+  </h2>
+  
+  <!-- Card with explicit background -->
+  <div style="position: absolute; top: 120px; left: 40px; width: 400px; height: 150px; background: #f8f9fa; padding: 20px;">
+    <h3 style="font-size: 20px; margin: 0;">Card Title</h3>
+    <p style="font-size: 16px; margin: 10px 0 0 0;">Card content</p>
+  </div>
+</div>
+```
+
+### 5. Example Structure (WRONG):
+```html
+<div class="p-slide">
+  <!-- Grid layout - will be IGNORED -->
+  <div class="content-grid" style="display: grid; grid-template-columns: repeat(2, 1fr);">
+    <!-- Transparent background - will be IGNORED -->
+    <div class="card">
+      <h3>Title</h3>
+      <p>Content</p>
+    </div>
+  </div>
+</div>
+```
 
 ## Creating Presentations
 To create a presentation, you must generate an **HTML file** that represents the slides.

@@ -76,8 +76,34 @@ contextBridge.exposeInMainWorld('electron', {
     historyDelete: (id: string) => ipcRenderer.invoke('history-delete', id),
     historyRename: (id: string, title: string) => ipcRenderer.invoke('history-rename', id, title),
 
+    // Encryption
+    encryptionHasMasterPassword: () => ipcRenderer.invoke('encryption:has-master-password'),
+    encryptionSetMasterPassword: (password: string) => ipcRenderer.invoke('encryption:set-master-password', password),
+    encryptionUnlock: () => ipcRenderer.invoke('encryption:unlock'),
+    encryptionVerifyPassword: (password: string) => ipcRenderer.invoke('encryption:verify-password', password),
+    encryptionIsUnlocked: () => ipcRenderer.invoke('encryption:is-unlocked'),
+    encryptionLock: () => ipcRenderer.invoke('encryption:lock'),
+    encryptionClearAll: () => ipcRenderer.invoke('encryption:clear-all'),
+
+    // Enhanced Memory
+    memoryAddEnhanced: (options: any) => ipcRenderer.invoke('memory:add-enhanced', options),
+    memoryListEnhanced: () => ipcRenderer.invoke('memory:list-enhanced'),
+    memorySearchEnhanced: (query: string, options?: any) => ipcRenderer.invoke('memory:search-enhanced', query, options),
+    memoryGetStatistics: () => ipcRenderer.invoke('memory:get-statistics'),
+    memorySuggestCategory: (content: string) => ipcRenderer.invoke('memory:suggest-category', content),
+    memoryDecrypt: (memory: any) => ipcRenderer.invoke('memory:decrypt', memory),
+    memoryAddManual: (options: any) => ipcRenderer.invoke('memory:add-manual', options),
+    memoryGetUsageForMessage: (messageId: string, query: string) => ipcRenderer.invoke('memory:get-usage-for-message', messageId, query),
+
+    // Phase 5: Memory Optimization
+    memoryFindDuplicates: (threshold?: number) => ipcRenderer.invoke('memory:find-duplicates', threshold),
+    memoryMergeDuplicates: (memoryId1: string, memoryId2: string) => ipcRenderer.invoke('memory:merge-duplicates', memoryId1, memoryId2),
+    memoryOptimizeAll: () => ipcRenderer.invoke('memory:optimize-all'),
+    memorySuggestCategoryAdvanced: (content: string) => ipcRenderer.invoke('memory:suggest-category-advanced', content),
+
     // System
     copyToClipboard: (text: string) => ipcRenderer.invoke('copy-to-clipboard', text),
     shellOpenPath: (path: string) => ipcRenderer.invoke('shell-open-path', path),
+    showItemInFolder: (path: string) => ipcRenderer.invoke('show-item-in-folder', path),
     pathResolve: (...args: string[]) => require('path').resolve(...args),
 });

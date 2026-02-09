@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PPTX Template - Conversion-Friendly</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Source Han Sans SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background: #f0f0f0;
+        }
+
+        /* 
+         * CRITICAL RULES FOR SUCCESSFUL CONVERSION:
+         * 1. Slide MUST be 960px × 540px
+         * 2. Use ABSOLUTE positioning for all content
+         * 3. Give ALL content boxes explicit background colors
+         * 4. Avoid complex grid layouts - use absolute positioning instead
+         * 5. Keep text in direct P, H1, H2, H3 tags (not nested in DIVs)
+         */
+        .p-slide {
+            width: 960px;
+            height: 540px;
+            position: relative;
+            overflow: hidden;
+            background: white;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========== SLIDE 1: Cover ========== -->
+    <div class="p-slide" style="background: #667eea;">
+        <h1
+            style="position: absolute; top: 180px; left: 50%; transform: translateX(-50%); color: white; font-size: 56px; text-align: center; width: 100%; margin: 0;">
+            演示标题
+        </h1>
+        <p
+            style="position: absolute; top: 280px; left: 50%; transform: translateX(-50%); color: white; font-size: 24px; text-align: center; width: 100%; margin: 0;">
+            副标题 | 2026年2月4日
+        </p>
+    </div>
+
+    <!-- ========== SLIDE 2: Content with Cards ========== -->
+    <div class="p-slide">
+        <h2 style="position: absolute; top: 40px; left: 40px; font-size: 36px; color: #2c3e50; margin: 0;">
+            第一部分
+        </h2>
+
+        <!-- Card 1 - Top Left -->
+        <div
+            style="position: absolute; top: 120px; left: 40px; width: 400px; height: 150px; background: #f8f9fa; border-radius: 8px; padding: 20px; box-sizing: border-box; border-left: 5px solid #667eea;">
+            <h3 style="font-size: 20px; color: #667eea; margin: 0 0 10px 0;">项目 1</h3>
+            <p style="font-size: 16px; margin: 0; line-height: 1.5;">简短描述内容，不超过2-3行文字。</p>
+        </div>
+
+        <!-- Card 2 - Top Right -->
+        <div
+            style="position: absolute; top: 120px; left: 480px; width: 400px; height: 150px; background: #f8f9fa; border-radius: 8px; padding: 20px; box-sizing: border-box; border-left: 5px solid #667eea;">
+            <h3 style="font-size: 20px; color: #667eea; margin: 0 0 10px 0;">项目 2</h3>
+            <p style="font-size: 16px; margin: 0; line-height: 1.5;">简短描述内容，不超过2-3行文字。</p>
+        </div>
+
+        <!-- Card 3 - Bottom Left -->
+        <div
+            style="position: absolute; top: 300px; left: 40px; width: 400px; height: 150px; background: #f8f9fa; border-radius: 8px; padding: 20px; box-sizing: border-box; border-left: 5px solid #667eea;">
+            <h3 style="font-size: 20px; color: #667eea; margin: 0 0 10px 0;">项目 3</h3>
+            <p style="font-size: 16px; margin: 0; line-height: 1.5;">简短描述内容，不超过2-3行文字。</p>
+        </div>
+
+        <!-- Card 4 - Bottom Right -->
+        <div
+            style="position: absolute; top: 300px; left: 480px; width: 400px; height: 150px; background: #f8f9fa; border-radius: 8px; padding: 20px; box-sizing: border-box; border-left: 5px solid #667eea;">
+            <h3 style="font-size: 20px; color: #667eea; margin: 0 0 10px 0;">项目 4</h3>
+            <p style="font-size: 16px; margin: 0; line-height: 1.5;">简短描述内容，不超过2-3行文字。</p>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 3: Summary with Bullet Points ========== -->
+    <div class="p-slide" style="background: #f8f9fa;">
+        <h2 style="position: absolute; top: 40px; left: 40px; font-size: 36px; color: #667eea; margin: 0;">
+            总结
+        </h2>
+
+        <!-- Content Box with explicit background -->
+        <div
+            style="position: absolute; top: 120px; left: 40px; width: 880px; height: 340px; background: white; border-radius: 10px; padding: 30px; box-sizing: border-box;">
+            <p style="font-size: 20px; margin: 0 0 20px 0; line-height: 1.8;">
+                ✓ 要点一：简洁明了的第一个要点<br>
+                ✓ 要点二：清晰表达的第二个要点<br>
+                ✓ 要点三：重点突出的第三个要点<br>
+                ✓ 要点四：总结性的第四个要点
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <p
+            style="position: absolute; bottom: 30px; left: 40px; right: 40px; text-align: center; font-size: 14px; color: #666; margin: 0;">
+            页脚信息
+        </p>
+    </div>
+
+</body>
+
+</html>

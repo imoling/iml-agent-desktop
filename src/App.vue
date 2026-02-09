@@ -13,12 +13,40 @@ import SettingsModal from './components/SettingsModal.vue'
 import ImportSkillModal from './components/ImportSkillModal.vue'
 
 import PermissionRequestModal from './components/PermissionRequestModal.vue'
+import EncryptionSetup from './components/EncryptionSetup.vue'
+import UnlockDialog from './components/UnlockDialog.vue'
+
 import { useI18n } from 'vue-i18n'
 
 import { useAppStore } from './stores/app'
 import { useChatStore } from './stores/chat'
 
 const { t, locale } = useI18n()
+
+// Encryption State
+const showEncryptionSetup = ref(false)
+const showUnlockDialog = ref(false)
+
+const checkEncryptionStatus = async () => {
+    if (!window.electron || !window.electron.encryptionHasMasterPassword) return
+
+    try {
+        const hasPassword = await window.electron.encryptionHasMasterPassword()
+        if (!hasPassword) {
+            // 如果还未设置过主密码，提示设置
+            showEncryptionSetup.value = true
+            return
+        }
+
+        const isUnlocked = await window.electron.encryptionIsUnlocked()
+        if (!isUnlocked) {
+            // 如果有密码但未解锁，提示解锁
+            showUnlockDialog.value = true
+        }
+    } catch (e) {
+        console.error('Failed to check encryption status:', e)
+    }
+}
 
 // Initialize locale from storage or default to zh-CN
 const savedLocale = localStorage.getItem('user-locale')
@@ -90,6 +118,7 @@ const setActiveProfile = async (id: string) => {
 onMounted(() => {
   skillsStore.fetchSkills()
   fetchConfig()
+  checkEncryptionStatus()
 })
 
 const handleSettingsClose = () => {
@@ -327,6 +356,20 @@ const getMenuTitle = () => {
         @close="handleSettingsClose" 
       />
       <PermissionRequestModal />
+      
+      <!-- Encryption / Security Modals -->
+      <EncryptionSetup 
+          v-if="showEncryptionSetup"
+          @setup-complete="showEncryptionSetup = false; checkEncryptionStatus()"
+          @skip="showEncryptionSetup = false"
+      />
+      
+      <UnlockDialog 
+          v-if="showUnlockDialog"
+          @unlocked="showUnlockDialog = false"
+          @skip="showUnlockDialog = false"
+          @reset="showUnlockDialog = false; showEncryptionSetup = true"
+      />
     </main>
   </div>
 </template>

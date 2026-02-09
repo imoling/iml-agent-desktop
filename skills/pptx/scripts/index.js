@@ -49,7 +49,7 @@ async function createPptx(htmlFile, outputFile) {
     }
 }
 
-module.exports = async function (params) {
+const main = async function (params) {
     const { action, file_path, output_path } = params;
 
     if (action === 'analyze') {
@@ -64,3 +64,21 @@ module.exports = async function (params) {
 
     throw new Error(`Unknown action: ${action}`);
 };
+
+module.exports = main;
+
+// CLI Execution Logic
+if (require.main === module) {
+    const args = process.argv[2] ? JSON.parse(process.argv[2]) : {};
+
+    main(args)
+        .then(output => {
+            // Check if output is object or string, format as JSON
+            const response = typeof output === 'object' ? output : { output };
+            process.stdout.write(`JSON_OUTPUT:${JSON.stringify(response)}`);
+        })
+        .catch(error => {
+            process.stdout.write(`JSON_OUTPUT:${JSON.stringify({ error: error.message })}`);
+            process.exit(1);
+        });
+}

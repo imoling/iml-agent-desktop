@@ -44,5 +44,5 @@ parameters:
     - action
 ---
 
-# 浏览器操作
-Control a web browser to navigate pages, click elements, type text, and take screenshots.
+# 浏览器操作 (Agent Browser)
+Control a web browser using Vercel Labs' `agent-browser` engine. Supports persistent sessions, optimized semantic selectors, and fast execution.

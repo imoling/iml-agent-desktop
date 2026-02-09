@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { X, Shield, Globe, Save, CheckCircle2, Settings, Mic, Lock, Trash2, Plus, Moon, Sun, Monitor, Languages } from 'lucide-vue-next'
+import { X, Shield, Globe, Save, CheckCircle2, Settings, Mic, Lock, Trash2, Plus, Moon, Sun, Monitor, Languages, Brain } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import VoiceSettings from './settings/VoiceSettings.vue'
+import ContextSettings from './settings/ContextSettings.vue'
 import { useAppStore } from '../stores/app'
 import { storeToRefs } from 'pinia'
 
@@ -17,6 +18,7 @@ const tavilyApiKey = ref('')
 const loading = ref(false)
 const saved = ref(false)
 const voiceSettingsRef = ref<any>(null)
+const contextSettingsRef = ref<any>(null)
 const secrets = ref<string[]>([])
 const newSecret = ref('')
 const theme = ref<'system' | 'dark' | 'light'>('system')
@@ -34,6 +36,7 @@ const visionModel = ref({
 
 const tabs = [
     { id: 'general', label: 'settings.general.title', icon: Settings },
+    { id: 'context', label: '上下文管理', icon: Brain },
     { id: 'vision', label: 'settings.vision.title', icon: Globe },
     { id: 'voice', label: 'settings.voice.title', icon: Mic },
     { id: 'secrets', label: 'settings.secrets.title', icon: Lock },
@@ -88,9 +91,12 @@ onMounted(async () => {
 const saveSettings = async () => {
   loading.value = true
   try {
-    // 1. Save Child Settings (Voice) if active
+    // 1. Save Child Settings (Voice, Context) if active
     if (activeTab.value === 'voice' && voiceSettingsRef.value) {
       await voiceSettingsRef.value.save()
+    }
+    if (activeTab.value === 'context' && contextSettingsRef.value) {
+      await contextSettingsRef.value.save()
     }
 
     // 2. Save Global Settings (General + Vision + Secrets) always
@@ -418,6 +424,9 @@ const saveSettings = async () => {
                          </div>
                     </div>
                </div>
+
+              <!-- Context Tab -->
+              <ContextSettings v-if="activeTab === 'context'" ref="contextSettingsRef" />
 
               <!-- Voice Tab -->
               <VoiceSettings v-if="activeTab === 'voice'" ref="voiceSettingsRef" />

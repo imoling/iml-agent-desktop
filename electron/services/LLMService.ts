@@ -4,8 +4,12 @@ import { LLMProvider, ChatMessage } from './llm/types';
 import { AnthropicProvider } from './llm/AnthropicProvider';
 import { OpenAIProvider } from './llm/OpenAIProvider';
 import { VectorStore } from './memory/VectorStore';
+import { getTokenCounter } from '../utils/TokenCounter';
+import { getModelConfig } from '../config/modelLimits';
+import { getContextManager } from './ContextManager';
 
 import { PermissionManager } from './PermissionManager';
+import EncryptionService from './EncryptionService';
 
 export class LLMService {
     private configManager: ConfigManager;
@@ -26,6 +30,21 @@ export class LLMService {
 
     setWorkflowManager(workflowManager: any) {
         this.workflowManager = workflowManager;
+    }
+
+    private getCurrentModel(): string {
+        const config = this.configManager.getAll();
+        let model = config.model || 'claude-3-5-sonnet-20240620';
+
+        // Multi-Model Support: Resolve active profile
+        if (config.profiles && config.profiles.length > 0 && config.activeProfileId) {
+            const profile = config.profiles.find(p => p.id === config.activeProfileId);
+            if (profile) {
+                model = profile.model;
+            }
+        }
+
+        return model;
     }
 
     private getProvider(): LLMProvider {
@@ -96,7 +115,19 @@ export class LLMService {
         try {
             if (!this.embeddingPipeline) {
                 console.log('[LLMService] Initializing local embedding pipeline (Xenova/paraphrase-multilingual-MiniLM-L12-v2)...');
-                const { pipeline } = await import('@xenova/transformers');
+                const { pipeline, env } = await import('@xenova/transformers');
+
+                // Configure for local model bundling
+                const path = await import('path');
+                // In production (packaged app), resources might be in a different place relative to __dirname
+                // For dev: project_root/resources/models
+                // For prod: resources/models
+                env.localModelPath = path.resolve(__dirname, '../../resources/models');
+                env.allowRemoteModels = false; // Force local
+                env.allowLocalModels = true;
+
+                console.log('[LLMService] Loading model from:', env.localModelPath);
+
                 // Use a multilingual model for better Chinese support
                 this.embeddingPipeline = await pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
                 console.log('[LLMService] Local embedding pipeline initialized (Multilingual).');
@@ -119,6 +150,8 @@ export class LLMService {
         }
     }
 
+
+
     async retrieveContext(query: string): Promise<string> {
         if (!this.vectorStore) return '';
         try {
@@ -134,9 +167,25 @@ export class LLMService {
                 return '';
             }
 
-            const contextBlock = filteredResults.map(doc =>
-                `- ${doc.content} (Source: ${doc.metadata.source || 'Unknown'}, Time: ${new Date(doc.metadata.timestamp).toLocaleString()}, Score: ${doc.score?.toFixed(2)})`
-            ).join('\n');
+            const contextBlock = filteredResults.map(doc => {
+                let content = doc.content;
+
+                // Decrypt if necessary
+                if (doc.metadata?.encrypted) {
+                    if (EncryptionService.isUnlocked()) {
+                        try {
+                            content = EncryptionService.decrypt(content);
+                        } catch (e) {
+                            console.error(`[LLMService] Failed to decrypt memory ${doc.id}:`, e);
+                            content = '[Encrypted Content - Decryption Failed]';
+                        }
+                    } else {
+                        content = '[Encrypted Content - Locked]';
+                    }
+                }
+
+                return `- ${content} (Source: ${doc.metadata.source || 'Unknown'}, Time: ${new Date(doc.metadata.timestamp).toLocaleString()}, Score: ${doc.score?.toFixed(2)})`;
+            }).join('\n');
 
             console.log(`[LLMService] Retrieved ${filteredResults.length} context items (Filtered from ${results.length}).`);
             return `\n\nRELEVANT MEMORY (RAG):\nThe following information was retrieved from your long-term memory. Use it to answer the user's request if relevant.\n${contextBlock}`;
@@ -211,6 +260,25 @@ RAG ENABLED: You have access to a long-term memory. Relevant context has been in
         // Let's append to system prompt template.
 
         // ... Re-add the rest of the prompt ...
+        const memoryProtocol = `
+MEMORY MANAGEMENT PROTOCOL:
+When the user asks you to "remember" or "save" information, you MUST use the 'knowledge-base' skill with appropriate metadata:
+1. Category: 'credential' for passwords/keys, 'project' for work, 'personal' for user details.
+2. Priority: 'high' for critical info, 'medium' for standard.
+3. Encrypted: TRUE if the content contains passwords, API keys, or private personal data.
+4. Tags: arrays of keywords (e.g. ["password", "server", "admin"]).
+
+Example:
+User: "My github token is ghp_12345"
+Tool Call: knowledge-base.add({ 
+    content: "My github token is ghp_12345", 
+    category: "credential", 
+    priority: "high", 
+    encrypted: true, 
+    tags: ["github", "token"] 
+})
+`;
+
         const planningPrompt = `
 PLANNING PROTOCOL:
 Before executing any tool, you MUST output a plan using <plan> tags.
@@ -299,7 +367,7 @@ BROWSER AUTOMATION SECURITY PROTOCOL:
    <question options="Done,Cancel">I see a CAPTCHA. Please solve it manually in the browser window, then click Done.</question> 
 `;
 
-        effectiveSystemPrompt += planningPrompt + "\n" + securityProtocol;
+        effectiveSystemPrompt += planningPrompt + "\n" + memoryProtocol + "\n" + securityProtocol;
 
         // Inject CWD if provided
         if (options && options.cwd) {
@@ -411,6 +479,118 @@ BROWSER AUTOMATION SECURITY PROTOCOL:
             name: m.name,
             reasoning_content: m.reasoning_content
         }));
+
+        // P2 CONTEXT MANAGEMENT: Intelligent compression with optional summarization
+        const currentModel = this.getCurrentModel();
+        const modelConfig = getModelConfig(currentModel);
+        const tokenCounter = getTokenCounter();
+        const contextConfig = this.configManager.getAll();
+
+        // Calculate current token usage
+        const systemTokens = tokenCounter.countSystemPrompt(effectiveSystemPrompt, currentModel);
+        let messagesTokens = tokenCounter.countMessages(chatMessages, currentModel);
+        let totalTokens = systemTokens + messagesTokens;
+
+        console.log(`[LLMService] Token usage: ${totalTokens} / ${modelConfig.safeLimit} (${chatMessages.length} messages)`);
+
+        // If exceeding safe limit, compress messages
+        if (totalTokens > modelConfig.safeLimit) {
+            const originalCount = chatMessages.length;
+            const originalTokens = totalTokens;
+
+            // Get compression settings
+            const contextSettings = contextConfig.contextManagement || {
+                enableSummary: false,
+                compressionStrategy: 'balanced'
+            };
+
+            if (contextSettings.enableSummary) {
+                // P2: Use ContextManager for smart compression with summarization
+                const contextManager = getContextManager();
+                const result = await contextManager.compressWithSummary(
+                    chatMessages,
+                    effectiveSystemPrompt,
+                    currentModel,
+                    effectiveProvider,
+                    {
+                        enableSummary: true,
+                        preserveToolCalls: true,
+                        aggressiveness: contextSettings.compressionStrategy
+                    }
+                );
+
+                chatMessages = result.messages;
+                messagesTokens = tokenCounter.countMessages(chatMessages, currentModel);
+                totalTokens = systemTokens + messagesTokens;
+
+                const removedCount = originalCount - chatMessages.length;
+                const savedTokens = originalTokens - totalTokens;
+
+                console.log(`[LLMService] Smart compression: ${originalCount} → ${chatMessages.length} messages, ${originalTokens} → ${totalTokens} tokens (saved ${savedTokens})`);
+
+                // Notify user with summary
+                if (result.summary) {
+                    onUpdate?.({
+                        type: 'text',
+                        content: `\n\n_[智能摘要]_\n${result.summary}\n\n_[压缩: 保留 ${chatMessages.length}/${originalCount} 条消息，节省 ${savedTokens.toLocaleString()} tokens]_\n\n`
+                    });
+                } else {
+                    onUpdate?.({
+                        type: 'text',
+                        content: `\n\n_[智能压缩: 保留 ${chatMessages.length}/${originalCount} 条消息，节省 ${savedTokens.toLocaleString()} tokens]_\n\n`
+                    });
+                }
+            } else {
+                // P1: Simple priority-based compression (no summarization)
+                const compressedMessages: any[] = [];
+                let currentTokenCount = systemTokens;
+
+                // Always keep the most recent message
+                if (chatMessages.length > 0) {
+                    const lastMessage = chatMessages[chatMessages.length - 1];
+                    const lastTokens = tokenCounter.countMessage(lastMessage, currentModel);
+                    compressedMessages.push(lastMessage);
+                    currentTokenCount += lastTokens;
+                }
+
+                // Work backwards, prioritizing user messages and tool calls
+                for (let i = chatMessages.length - 2; i >= 0; i--) {
+                    const msg = chatMessages[i];
+                    const msgTokens = tokenCounter.countMessage(msg, currentModel);
+
+                    if (currentTokenCount + msgTokens > modelConfig.safeLimit) {
+                        if (compressedMessages.length >= modelConfig.recentMessages) {
+                            break;
+                        }
+                        if (msg.role !== 'user' && !msg.tool_calls) {
+                            continue;
+                        }
+                    }
+
+                    compressedMessages.unshift(msg);
+                    currentTokenCount += msgTokens;
+
+                    if (compressedMessages.length >= modelConfig.recentMessages * 2) {
+                        break;
+                    }
+                }
+
+                chatMessages = compressedMessages;
+                messagesTokens = tokenCounter.countMessages(chatMessages, currentModel);
+                totalTokens = systemTokens + messagesTokens;
+
+                const removedCount = originalCount - chatMessages.length;
+                const savedTokens = originalTokens - totalTokens;
+
+                console.log(`[LLMService] Compressed: ${originalCount} → ${chatMessages.length} messages, ${originalTokens} → ${totalTokens} tokens (saved ${savedTokens})`);
+
+                onUpdate?.({
+                    type: 'text',
+                    content: `\n\n_[智能压缩: 保留 ${chatMessages.length}/${originalCount} 条消息，节省 ${savedTokens.toLocaleString()} tokens]_\n\n`
+                });
+            }
+        }
+
 
         // Wrap onUpdate to sanitize streaming content
         const sanitizedOnUpdate = (data: any) => {

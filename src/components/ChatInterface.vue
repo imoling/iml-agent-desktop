@@ -5,7 +5,7 @@ import {
     Square, Loader2, Cpu, FilePlus, Mic, Paperclip, History, PanelLeftOpen, PanelLeftClose,
     PanelRightOpen, PanelRightClose,
     Plane, Presentation, BarChart3, TreeDeciduous, FileText, Zap, Copy, Edit2, Check,
-    ChevronDown
+    ChevronDown, MessageSquarePlus
 } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { useI18n } from 'vue-i18n'
@@ -18,8 +18,12 @@ import TaskProgress from './TaskProgress.vue'
 import ChatHistory from './ChatHistory.vue'
 import InteractiveQuestion from './InteractiveQuestion.vue'
 import ConfirmationCard from './ConfirmationCard.vue'
+import MemoryButton from './MemoryButton.vue'
+import MemoryDialog from './MemoryDialog.vue'
+import MemoryUsageIndicator from './MemoryUsageIndicator.vue'
 import MessageEditor from './MessageEditor.vue'
 import RightDrawer from './RightDrawer.vue'
+import TokenUsage from './TokenUsage.vue'
 import { useMasking } from '../composables/useMasking'
 
 const { mask } = useMasking()
@@ -108,6 +112,17 @@ const { t } = useI18n()
 const chatStore = useChatStore()
 const { messages, currentInput, workingDirectory } = storeToRefs(chatStore)
 const pendingConfirmation = ref<{ toolName: string; args: any } | null>(null)
+
+// Token usage tracking - use actual data from chatStore
+const tokenUsage = computed(() => ({
+    currentTokens: chatStore.sessionDetails.total,
+    maxTokens: 131072,
+    safeLimit: 120000,
+    compressed: false,
+    savedTokens: 0
+}))
+
+
 
 const handleConfirmation = async (allowed: boolean) => {
     pendingConfirmation.value = null // Clear UI
@@ -428,6 +443,86 @@ const toggleRecording = () => {
 const appStore = useAppStore()
 
 // ... (existing logic)
+
+// Memory Management State
+const showMemoryDialog = ref(false)
+const memoryDialogContent = ref('')
+const currentMemoryMessageId = ref<string | null>(null)
+const messageMemoryUsage = ref<Record<string, any[]>>({})
+
+// 打开记忆对话框
+const openMemoryDialog = (content: string, messageId: string) => {
+    memoryDialogContent.value = content
+    currentMemoryMessageId.value = messageId
+    showMemoryDialog.value = true
+}
+
+// 保存记忆
+const handleSaveMemory = async (memoryData: any) => {
+    try {
+        // 先检查 API 是否可用
+        if (!window.electron || !window.electron.memoryAddManual) {
+            alert('错误: 记忆保存功能未正确初始化 (API missing)。请尝试重启应用。')
+            return
+        }
+
+        // 深拷贝数据以去除 Vue 响应式 Proxy，避免 "object could not be cloned" 错误
+        const cleanMemoryData = JSON.parse(JSON.stringify(memoryData))
+        
+        const result = await window.electron.memoryAddManual({
+            ...cleanMemoryData,
+            metadata: {
+                conversationId: chatStore.currentSessionId,
+                messageId: currentMemoryMessageId.value
+            }
+        })
+        
+        if (result.success) {
+            console.log('Memory saved successfully:', result.memory)
+            showMemoryDialog.value = false
+            // 刷新记忆使用情况
+            if (messages.value.length > 0) {
+                 const lastMsg = messages.value[messages.value.length - 1]
+                 if (lastMsg) fetchMemoryUsage(lastMsg.id, currentInput.value || lastMsg.content)
+            }
+        } else {
+            console.error('Failed to save memory:', result.error)
+            alert(`保存失败: ${result.error}`)
+        }
+    } catch (error: any) {
+        console.error('Error saving memory:', error)
+        alert(`保存发生错误: ${error.message || '未知错误'}`)
+    }
+}
+
+// 获取记忆使用情况
+const fetchMemoryUsage = async (messageId: string, query: string) => {
+    if (!query || query.length < 2) return
+    try {
+        const result = await window.electron.memoryGetUsageForMessage(messageId, query)
+        if (result.success && result.memoryUsage && result.memoryUsage.length > 0) {
+            messageMemoryUsage.value[messageId] = result.memoryUsage
+        }
+    } catch (error) {
+        console.error('Failed to fetch memory usage:', error)
+    }
+}
+
+// Watch for new AI messages to fetch memory usage
+watch(() => messages.value.length, async (newLen, oldLen) => {
+    if (newLen > oldLen) {
+        const lastMsg = messages.value[newLen - 1]
+        // 如果是 AI 回复，尝试获取它基于什么记忆（通常基于上一条用户消息或它自己的内容上下文）
+        if (lastMsg.role === 'assistant') {
+             // 这里简化处理：使用 AI 回复内容的一小部分作为查询，或者最好使用上一条用户 Query
+             // 更好的做法是在 LLMService 返回时带上 usedMemories，但现在我们用独立检索模拟
+             const userMsg = messages.value[newLen - 2]
+             if (userMsg && userMsg.role === 'user') {
+                 await fetchMemoryUsage(lastMsg.id, userMsg.content)
+             }
+        }
+    }
+})
 
 // Workflow Save Modal State
 const showWorkflowModal = ref(false)
@@ -1369,6 +1464,15 @@ async function sendMessage() {
               <PanelLeftOpen v-if="!chatStore.isHistoryOpen" class="w-5 h-5" />
               <PanelLeftClose v-else class="w-5 h-5" />
           </button>
+          
+          <button 
+              v-if="!chatStore.isHistoryOpen"
+              @click="chatStore.newSession"
+              class="p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+              title="新对话"
+          >
+              <MessageSquarePlus class="w-5 h-5" />
+          </button>
           <div class="text-sm text-gray-500 flex-1">
               {{ chatStore.currentSessionId ? '' : '新对话' }}
           </div>
@@ -1381,6 +1485,17 @@ async function sendMessage() {
               <PanelRightClose v-else class="w-5 h-5" />
           </button>
 
+      </div>
+      
+      <!-- Token Usage Bar (Always visible) -->
+      <div class="px-4 py-2 border-b border-white/5">
+          <TokenUsage 
+              :currentTokens="tokenUsage.currentTokens"
+              :maxTokens="tokenUsage.maxTokens"
+              :safeLimit="tokenUsage.safeLimit"
+              :compressed="tokenUsage.compressed"
+              :savedTokens="tokenUsage.savedTokens"
+          />
       </div>
       
       <div 
@@ -1546,14 +1661,29 @@ async function sendMessage() {
                       </button>
                       <button 
                           @click="startEditing(msg)" 
-                          class="p-1.5 hover:bg-white/20 rounded text-gray-300 hover:text-white transition-colors"
+                          class="p-1.5 hover:bg-white/20 rounded text-gray-300 hover:text-white transition-colors relative group/btn"
                           title="编辑消息"
                       >
                           <Edit2 class="w-3.5 h-3.5" />
                       </button>
+                      
+                       <!-- Memory Button -->
+                       <div class="border-l border-white/10 ml-1 pl-1">
+                          <MemoryButton 
+                              :message-id="msg.id"
+                              @click="openMemoryDialog(msg.content, msg.id)"
+                          />
+                      </div>
                   </div>
               </div>
             </div>
+
+            <!-- Memory Usage Indicator -->
+            <MemoryUsageIndicator
+                v-if="msg.role === 'assistant' && messageMemoryUsage[msg.id]?.length > 0"
+                :memory-usage="messageMemoryUsage[msg.id]"
+                class="mt-3 mx-1"
+            />
 
             <!-- Interactive Question -->
             <InteractiveQuestion 
@@ -1773,6 +1903,13 @@ async function sendMessage() {
     </div>
 
   </div>  <!-- Close outer wrapper -->
+     <!-- Memory Dialog -->
+    <MemoryDialog
+        v-if="showMemoryDialog"
+        :initial-content="memoryDialogContent"
+        @save="handleSaveMemory"
+        @close="showMemoryDialog = false"
+    />
 </template>
 
 <style scoped>

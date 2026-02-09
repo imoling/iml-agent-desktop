@@ -32,6 +32,18 @@ interface UserConfig {
     theme?: 'system' | 'dark' | 'light';
     language?: 'zh-CN' | 'en';
 
+    // Context Management Settings
+    contextManagement?: {
+        enableSummary: boolean;
+        compressionStrategy: 'conservative' | 'balanced' | 'aggressive';
+    };
+
+    // Encryption Settings
+    encryptionConfig?: {
+        enabled: boolean;
+        testCiphertext?: string;
+    };
+
     // ...
 }
 
@@ -48,6 +60,10 @@ export class ConfigManager {
                 secrets: [],
                 theme: 'system',
                 language: 'zh-CN',
+                contextManagement: {
+                    enableSummary: false, // Disabled by default (P1 compression is enough)
+                    compressionStrategy: 'balanced'
+                },
                 visionModel: {
                     enabled: false,
                     provider: 'openai',

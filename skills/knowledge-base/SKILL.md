@@ -13,6 +13,21 @@ parameters:
     content:
       type: string
       description: "Content to add to memory (Required for 'add' action)."
+    category:
+      type: string
+      description: "Category of the memory. Options: 'project', 'personal', 'credential', 'preference', 'system'"
+    priority:
+      type: string
+      description: "Priority of the memory. Options: 'high', 'medium', 'low'"
+    tags:
+      type: array
+      description: "Array of tags for categorization."
+    encrypted:
+      type: boolean
+      description: "Whether to encrypt this memory (for sensitive data like passwords). Default: false"
+    expires_in:
+      type: number
+      description: "Expiration time in seconds from now (optional)."
     query:
       type: string
       description: "Query string to search for (Required for 'search' action)."

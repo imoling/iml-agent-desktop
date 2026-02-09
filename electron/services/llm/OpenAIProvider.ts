@@ -89,11 +89,14 @@ export class OpenAIProvider implements LLMProvider {
                         onUpdate?.({ type: 'text', content: delta.content });
                     }
 
+
                     if ((delta as any)?.reasoning_content) {
                         const rDelta = (delta as any).reasoning_content;
                         fullReasoning += rDelta;
+                        console.log('[OpenAI] Reasoning delta received:', rDelta.substring(0, 100));
                         onUpdate?.({ type: 'reasoning', content: rDelta });
                     }
+
 
                     if (delta?.tool_calls) {
                         for (const toolCallChunk of delta.tool_calls) {

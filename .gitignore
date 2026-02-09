@@ -1,5 +1,14 @@
 # Dependencies
 node_modules/
+.venv/
+venv/
+env/
+dist/
+build/
+*.so
+*.dylib
+*.dll
+
 
 # Build outputs
 .vite/
@@ -8,6 +17,9 @@ dist/
 
 # Whisper models (large binary files, downloaded separately)
 resources/whisper/models/*.bin
+
+# Local LLM/Embedding models
+resources/models/
 
 # OS files
 .DS_Store
