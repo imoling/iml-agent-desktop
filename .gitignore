@@ -47,7 +47,8 @@ running/
 
 
 # Documentation
-docs/
+# Documentation
+# docs/ (Commented out to allow images on GitHub)
 
 # Website build
 website/
