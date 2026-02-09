@@ -10,6 +10,7 @@ import { getContextManager } from './ContextManager';
 
 import { PermissionManager } from './PermissionManager';
 import EncryptionService from './EncryptionService';
+import { app } from 'electron';
 
 export class LLMService {
     private configManager: ConfigManager;
@@ -122,7 +123,11 @@ export class LLMService {
                 // In production (packaged app), resources might be in a different place relative to __dirname
                 // For dev: project_root/resources/models
                 // For prod: resources/models
-                env.localModelPath = path.resolve(__dirname, '../../resources/models');
+                if (app.isPackaged) {
+                    env.localModelPath = path.join(process.resourcesPath, 'models');
+                } else {
+                    env.localModelPath = path.resolve(__dirname, '../../resources/models');
+                }
                 env.allowRemoteModels = false; // Force local
                 env.allowLocalModels = true;
 

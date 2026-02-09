@@ -1,4 +1,5 @@
 import path from 'path';
+import { app } from 'electron';
 import fs from 'fs';
 import { glob } from 'glob';
 import matter from 'gray-matter';
@@ -26,7 +27,11 @@ export class SkillManager {
         this.configManager = configManager;
         // 在开发环境中，skills 目录位于项目根目录
         // 在生产环境中，需要根据打包后的资源位置调整
-        this.skillsDir = path.resolve(__dirname, '../../skills');
+        if (app.isPackaged) {
+            this.skillsDir = path.join(process.resourcesPath, 'skills');
+        } else {
+            this.skillsDir = path.resolve(__dirname, '../../skills');
+        }
     }
 
     setLLMService(service: any) {
