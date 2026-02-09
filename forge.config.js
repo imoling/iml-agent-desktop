@@ -10,6 +10,21 @@ const NATIVE_MODULES = [
     'wavefile'
 ];
 
+// Prepare temp resources for packaging (Xenova only, exclude Whisper)
+const TEMP_RES = path.join(__dirname, 'temp_resources');
+if (fs.existsSync(TEMP_RES)) {
+    fs.rmSync(TEMP_RES, { recursive: true, force: true });
+}
+fs.mkdirSync(path.join(TEMP_RES, 'models'), { recursive: true });
+
+// Copy Xenova models
+const xenovaSrc = path.join(__dirname, 'resources', 'models', 'Xenova');
+const xenovaDest = path.join(TEMP_RES, 'models', 'Xenova');
+if (fs.existsSync(xenovaSrc)) {
+    console.log('Copying Xenova models for packaging...');
+    fs.cpSync(xenovaSrc, xenovaDest, { recursive: true });
+}
+
 module.exports = {
     packagerConfig: {
         icon: './resources/icon',
@@ -19,8 +34,8 @@ module.exports = {
         },
         // Copy necessary files
         extraResource: [
-            './skills',
-            './resources/models', // Includes embeddings and whisper
+            // './skills', // Externalized manually
+            './temp_resources/models', // Includes only Xenova
             './resources/icon.png',
             './resources/icon.icns'
         ],
@@ -30,6 +45,10 @@ module.exports = {
             /^\/\.vscode/,
             /^\/src$/,
             /^\/electron$/,
+            /^\/out$/,
+            /^\/temp_resources$/,
+            /^\/skills($|\/)/,     // EXCLUDE skills from app bundle (loaded from external Resources)
+            /^\/resources\/models($|\/)/, // EXCLUDE models from app bundle (Xenova loaded from external Resources)
             /\.ts$/,
             /\.md$/
         ]
@@ -54,6 +73,13 @@ module.exports = {
                     console.log(`Copying native module: ${mod}`);
                     fs.cpSync(sourcePath, targetPath, { recursive: true });
                 }
+            }
+        },
+        postMake: async () => {
+            // Cleanup temp resources
+            if (fs.existsSync(TEMP_RES)) {
+                console.log('Cleaning up temp resources...');
+                fs.rmSync(TEMP_RES, { recursive: true, force: true });
             }
         }
     },

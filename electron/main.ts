@@ -60,12 +60,19 @@ const createWindow = () => {
         titleBarStyle: 'hiddenInset', // Mac style
         vibrancy: 'under-window', // Mac blur effect
         visualEffectState: 'active',
-        ...(process.platform !== 'darwin' ? { icon: path.join(__dirname, '../../resources/icon.icns') } : {})
+        ...(process.platform !== 'darwin' ? {
+            icon: app.isPackaged
+                ? path.join(process.resourcesPath, 'icon.icns')
+                : path.join(__dirname, '../../resources/icon.icns')
+        } : {})
     });
 
     if (process.platform === 'darwin') {
         try {
-            app.dock?.setIcon(path.join(__dirname, '../../resources/icon.png'));
+            const iconPath = app.isPackaged
+                ? path.join(process.resourcesPath, 'icon.png')
+                : path.join(__dirname, '../../resources/icon.png');
+            app.dock?.setIcon(iconPath);
         } catch (e) {
             console.error('Failed to set dock icon:', e);
         }
