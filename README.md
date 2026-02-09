@@ -4,7 +4,25 @@
 
 **iML Agent Desktop** is a **native desktop-grade, all-in-one AI agent assistant**. Built on a novel "Brain + Skills" architecture, it pursues ultimate minimalist design aesthetics while delivering powerful capabilities in automated execution, deep data analysis, creative design, and intelligent schedule management.
 
-![App Screenshot](docs/images/app-screenshot.png)
+![Start Screen](docs/images/1.开始界面.png)
+
+## 📸 Gallery
+
+| ![Skill Ecosystem](docs/images/2.技能列表.png) | ![Memory Management](docs/images/3.记忆管理.png) |
+|:---:|:---:|
+| **Skill Ecosystem** | **Memory Management** |
+
+| ![General Settings](docs/images/4.通用设置.png) | ![Context Management](docs/images/5.上下文管理.png) |
+|:---:|:---:|
+| **General Settings** | **Context Management** |
+
+| ![Voice Settings](docs/images/6.录音设置.png) | ![Feature Demo](docs/images/7.功能演示.png) |
+|:---:|:---:|
+| **Voice Settings** | **Feature Demo** |
+
+| ![Creative Output](docs/images/7.1.海报产物.png) | ![Dark Mode & I18n](docs/images/8.黑色模式+多语种.png) |
+|:---:|:---:|
+| **Creative Output (Poster)** | **Dark Mode & I18n** |
 
 ## ✨ Key Features
 
