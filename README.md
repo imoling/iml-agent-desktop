@@ -113,4 +113,4 @@ For more details, please refer to the [LICENSE](LICENSE) file.
 
 ---
 
-*Logic & Design by imoling.cn@gmail.com | Developed by LLM Gemini*
+*Logic & Design by imoling.cn@gmail.com | Developed by Gemini*

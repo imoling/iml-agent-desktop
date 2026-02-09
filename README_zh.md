@@ -113,4 +113,4 @@ graph TD
 
 ---
 
-*逻辑与设计: imoling.cn@gmail.com | 开发: LLM Gemini*
+*逻辑与设计: imoling.cn@gmail.com | 开发: Gemini*
