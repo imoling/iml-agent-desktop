@@ -20,6 +20,9 @@ resources/whisper/models/*.bin
 
 # Local LLM/Embedding models
 resources/models/
+!resources/models/whisper/
+resources/models/whisper/models/
+
 
 # OS files
 .DS_Store
@@ -38,3 +41,10 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+
+# Runtime data
+running/
+
+
+# Documentation
+docs/

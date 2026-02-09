@@ -20,8 +20,8 @@ export class VoiceService {
         console.log(`[VoiceService] App Path: ${appPath}`);
 
         const basePath = app.isPackaged
-            ? path.join(process.resourcesPath, 'whisper')
-            : path.join(appPath, 'resources', 'whisper');
+            ? path.join(process.resourcesPath, 'models', 'whisper')
+            : path.join(appPath, 'resources', 'models', 'whisper');
 
         this.whisperBinaryPath = path.join(basePath, 'bin', 'whisper-cli');
         this.modelPath = path.join(basePath, 'models', 'ggml-tiny.bin');
@@ -58,8 +58,8 @@ export class VoiceService {
         console.log(`[VoiceService] Resolved to file: "${modelFile}"`);
 
         const basePath = app.isPackaged
-            ? path.join(process.resourcesPath, 'whisper')
-            : path.join(app.getAppPath(), 'resources', 'whisper');
+            ? path.join(process.resourcesPath, 'models', 'whisper')
+            : path.join(app.getAppPath(), 'resources', 'models', 'whisper');
 
         this.modelPath = path.join(basePath, 'models', modelFile);
         console.log(`[VoiceService] Model path set to: ${this.modelPath}`);

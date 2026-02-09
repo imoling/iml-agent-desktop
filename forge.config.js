@@ -20,7 +20,9 @@ module.exports = {
         // Copy necessary files
         extraResource: [
             './skills',
-            './resources'
+            './resources/models', // Includes embeddings and whisper
+            './resources/icon.png',
+            './resources/icon.icns'
         ],
         // Ignore unnecessary files to reduce bundle size
         ignore: [
