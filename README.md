@@ -36,6 +36,43 @@ npm start
 npm run make
 ```
 
+## 💡 Technical Innovations
+
+- **First-Principles Agent Design**: Moves beyond "Chatbot + Tools" to a "Brain + Skills" architecture, where the LLM orchestrates complex capabilities autonomously.
+- **Privacy-First RAG**: 100% local memory using `vectra` + `transformers.js` (Local Embedding). Your data never leaves your device.
+- **Dual-Mode Automation**: Seamless switching between System (Node.js) and Browser (Puppeteer) control for comprehensive task execution.
+- **Continuous Execution**: Implements a strict protocol to prevent AI "laziness", ensuring long-running tasks complete without constant user intervention.
+
+## 🏗️ Technical Architecture
+
+```mermaid
+graph TD
+    User[User] --> Frontend[Vue 3 Frontend]
+    Frontend -- IPC --> Main[Electron Main Process]
+    
+    subgraph "Core Services"
+        Main --> LLM[LLM Service]
+        Main --> SkillMgr[Skill Manager]
+        Main --> Memory[Memory Manager]
+    end
+
+    subgraph "Capabilities"
+        SkillMgr --> Skills[Skill Ecosystem]
+        Memory --> VectorDB[(Vectra DB)]
+        LLM --> Models[AI Models]
+    end
+
+    Skills --> System[System Automation]
+    Skills --> Browser[Browser Automation]
+```
+
+## 📂 Directory Structure
+
+- **`skills/`**: Contains all agent capabilities. Each subfolder is a standalone skill (e.g., `browser-automation`, `data-analyst`).
+- **`resources/`**:
+    - `models/`: Stores local AI models (embeddings, Whisper) for offline privacy.
+    - `icons/`: Application assets.
+
 ## 🛠️ Technology Stack
 
 - **Frontend**: Vue 3 + Vite + Tailwind CSS + Element Plus

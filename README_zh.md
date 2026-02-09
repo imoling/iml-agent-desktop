@@ -36,6 +36,43 @@ npm start
 npm run make
 ```
 
+## 💡 技术创新点
+
+- **第一性原理设计**: 摒弃传统的 "Chatbot + Tools" 模式，构建 "大脑 + 技能" 的原生智能体架构。LLM 自主编排任务，而非简单调用 API。
+- **隐私优先 RAG**: 基于 `vectra` + `transformers.js` 实现 100% 本地化记忆。您的数据永远驻留在本地设备上。
+- **双模自动化引擎**: 无缝切换系统级 (Node.js) 与 浏览器级 (Puppeteer) 自动化控制，实现全场景覆盖。
+- **连续执行协议**: 针对长链路任务设计的防中断机制，解决 AI "偷懒" 问题，确保复杂工作流稳定运行。
+
+## 🏗️ 技术架构
+
+```mermaid
+graph TD
+    User[用户] --> Frontend[Vue 3 前端]
+    Frontend -- IPC --> Main[Electron 主进程]
+    
+    subgraph "核心服务"
+        Main --> LLM[LLM 服务]
+        Main --> SkillMgr[技能管理]
+        Main --> Memory[记忆管理]
+    end
+
+    subgraph "能力层"
+        SkillMgr --> Skills[技能生态]
+        Memory --> VectorDB[(Vectra 向量库)]
+        LLM --> Models[AI 模型]
+    end
+
+    Skills --> System[系统自动化]
+    Skills --> Browser[浏览器自动化]
+```
+
+## 📂 目录结构
+
+- **`skills/`**: 存放所有智能体技能。每个子目录都是一个独立的技能包（如 `browser-automation`）。
+- **`resources/`**:
+    - `models/`: 存放本地 AI 模型（向量嵌入、Whisper），确保离线隐私。
+    - `icons/`: 应用资源文件。
+
 ## 🛠️ 技术栈
 
 - **Frontend**: Vue 3 + Vite + Tailwind CSS + Element Plus
