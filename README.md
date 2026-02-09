@@ -2,7 +2,7 @@
 
 # iML Agent Desktop
 
-iML Agent Desktop is a desktop-grade, all-in-one AI agent assistant designed based on first principles. It pursues ultimate minimalist design aesthetics while providing powerful capabilities in automation, data analysis, creative design, and schedule management.
+**iML Agent Desktop** is a **native desktop-grade, all-in-one AI agent assistant**. Built on a novel "Brain + Skills" architecture, it pursues ultimate minimalist design aesthetics while delivering powerful capabilities in automated execution, deep data analysis, creative design, and intelligent schedule management.
 
 ![App Screenshot](docs/images/app-screenshot.png)
 
@@ -38,7 +38,11 @@ npm run make
 
 ## 💡 Technical Innovations
 
-- **First-Principles Agent Design**: Moves beyond "Chatbot + Tools" to a "Brain + Skills" architecture, where the LLM orchestrates complex capabilities autonomously.
+- **Native Agent Architecture**: Unlike traditional "Chatbot + Tool Use" patterns, this project builds a native "Brain + Skills" architecture. The LLM acts as a proactive brain that autonomously deconstructs goals, plans steps, and dynamically adjusts strategies, rather than just passively responding to function calls.
+- **Zero-Wrapper Native Implementation**: We reject "wrappers". The agent is built from scratch using Electron + Vue + Vectra, bypassing heavy frameworks like LangChain. This grants granular control over the Context Window and Memory management, ensuring optimal performance.
+- **Universal Skill Protocol**:
+    - **Understanding**: The framework dynamically parses `SKILL.md` (Markdown) to register skills. The LLM understands tool capabilities by "reading" these semantic descriptions rather than relying on hard-coded adapters.
+    - **Progressive Execution**: Through a strictly enforced "Thought-Plan-Action" loop in the System Prompt, the agent autonomously decomposes complex user requests into a chain of executable steps, verifying results at each stage.
 - **Privacy-First RAG**: 100% local memory using `vectra` + `transformers.js` (Local Embedding). Your data never leaves your device.
 - **Dual-Mode Automation**: Seamless switching between System (Node.js) and Browser (Puppeteer) control for comprehensive task execution.
 - **Continuous Execution**: Implements a strict protocol to prevent AI "laziness", ensuring long-running tasks complete without constant user intervention.
